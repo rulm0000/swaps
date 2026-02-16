@@ -1,0 +1,36 @@
+# OS/editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Python/R/Stata temporary artifacts
+__pycache__/
+*.pyc
+*.log
+*.tmp
+*.bak
+*.swp
+*.smcl
+*.ster
+*.dta
+*.gph
+*.rds
+*.Rhistory
+*.RData
+
+# Never commit real data or outputs by default
+data/raw/**
+data/intermediate/**
+data/derived/**
+output/tables/**
+output/figures/**
+output/logs/**
+
+# Keep directory placeholders
+!data/raw/.gitkeep
+!data/intermediate/.gitkeep
+!data/derived/.gitkeep
+!output/tables/.gitkeep
+!output/figures/.gitkeep
+!output/logs/.gitkeep

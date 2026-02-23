@@ -10,9 +10,6 @@ global CTOut  "C:/Users/culm/Box/K01 Aim 3 - Swaps Study/Data/Clayton Work/swaps
 
 capture mkdir "$CTOut"
 
-* ------------------------------------------------------------
-* 1) Outcome crosswalk (SAP outcomes 1-30 -> variables)
-* ------------------------------------------------------------
 tempfile crosswalk
 tempname pxc
 postfile `pxc' int outcome_id str28 domain str120 outcome_desc str80 source_dataset str40 variable_name str40 timepoint str80 notes using `crosswalk', replace
@@ -56,9 +53,6 @@ sort outcome_id
 export delimited using "$CTOut/ctgov_outcome_crosswalk.csv", replace
 export excel using "$CTOut/ctgov_reporting_package.xlsx", sheet("OutcomeCrosswalk") firstrow(variables) replace
 
-* ------------------------------------------------------------
-* 2) Participant flow
-* ------------------------------------------------------------
 use "$CTData/dataset A_nutri and carbon.dta", clear
 
 * Computed counts from analysis dataset (for QC against CONSORT numbers)
@@ -126,9 +120,6 @@ use `participant_flow', clear
 export delimited using "$CTOut/ctgov_participant_flow.csv", replace
 export excel using "$CTOut/ctgov_reporting_package.xlsx", sheet("ParticipantFlow") firstrow(variables) sheetreplace
 
-* ------------------------------------------------------------
-* 3) Baseline characteristics (visit 1 only)
-* ------------------------------------------------------------
 use "$CTData/dataset D_Visit1 demog polsup.dta", clear
 
 capture confirm variable inccat
@@ -156,7 +147,6 @@ foreach v of local vlist {
     }
 }
 
-* Age
 foreach lvl in 1 2 3 4 {
     count if agecat==`lvl'
     local n_all = r(N)
@@ -170,7 +160,6 @@ foreach lvl in 1 2 3 4 {
     post `pbl' ("Age") ("`lbl'") (`n_all') (`p_all') (`n_1') (`p_1') (`n_3') (`p_3') (`n_2') (`p_2') (`n_4') (`p_4')
 }
 
-* Gender
 foreach lvl in 1 2 3 {
     count if gendercat==`lvl'
     local n_all = r(N)
@@ -184,7 +173,6 @@ foreach lvl in 1 2 3 {
     post `pbl' ("Gender") ("`lbl'") (`n_all') (`p_all') (`n_1') (`p_1') (`n_3') (`p_3') (`n_2') (`p_2') (`n_4') (`p_4')
 }
 
-* Latino
 count if latino==1
 local n_all = r(N)
 local p_all = 100*`n_all'/`den_all_latino'
@@ -195,7 +183,6 @@ foreach a in 1 3 2 4 {
 }
 post `pbl' ("Latino") ("Latino(a) or Hispanic ethnicity") (`n_all') (`p_all') (`n_1') (`p_1') (`n_3') (`p_3') (`n_2') (`p_2') (`n_4') (`p_4')
 
-* Race
 foreach lvl in 1 2 3 5 6 {
     count if racecat==`lvl'
     local n_all = r(N)
@@ -212,7 +199,6 @@ foreach lvl in 1 2 3 5 6 {
     post `pbl' ("Race") ("`lbl'") (`n_all') (`p_all') (`n_1') (`p_1') (`n_3') (`p_3') (`n_2') (`p_2') (`n_4') (`p_4')
 }
 
-* Education
 foreach lvl in 1 3 5 6 {
     count if educcat==`lvl'
     local n_all = r(N)
@@ -228,7 +214,6 @@ foreach lvl in 1 3 5 6 {
     post `pbl' ("Education") ("`lbl'") (`n_all') (`p_all') (`n_1') (`p_1') (`n_3') (`p_3') (`n_2') (`p_2') (`n_4') (`p_4')
 }
 
-* Income (4-level)
 foreach lvl in 1 6 8 9 {
     count if inccat==`lvl'
     local n_all = r(N)
@@ -244,7 +229,6 @@ foreach lvl in 1 6 8 9 {
     post `pbl' ("Household income, annual") ("`lbl'") (`n_all') (`p_all') (`n_1') (`p_1') (`n_3') (`p_3') (`n_2') (`p_2') (`n_4') (`p_4')
 }
 
-* Household size
 foreach lvl in 1 3 5 {
     count if hhcat==`lvl'
     local n_all = r(N)
@@ -263,9 +247,6 @@ use `baseline', clear
 export delimited using "$CTOut/ctgov_baseline_characteristics.csv", replace
 export excel using "$CTOut/ctgov_reporting_package.xlsx", sheet("BaselineCharacteristics") firstrow(variables) sheetreplace
 
-* ------------------------------------------------------------
-* 4) Outcomes raw mean/SD by arm
-* ------------------------------------------------------------
 tempfile outstats
 tempname pos
 postfile `pos' int outcome_id str28 domain str120 outcome_desc str40 variable_name str30 timepoint ///
@@ -388,9 +369,6 @@ sort outcome_id
 export delimited using "$CTOut/ctgov_outcomes_raw_means_sds.csv", replace
 export excel using "$CTOut/ctgov_reporting_package.xlsx", sheet("Outcomes_MeanSD") firstrow(variables) sheetreplace
 
-* ------------------------------------------------------------
-* 5) QC sheet: compare computed baseline counts to provided Table 1 counts
-* ------------------------------------------------------------
 tempfile expected_base comp_base qc_base
 tempname pexp
 postfile `pexp' str28 characteristic str48 level ///

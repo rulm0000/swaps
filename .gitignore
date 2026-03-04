@@ -26,6 +26,10 @@ data/derived/**
 output/tables/**
 output/figures/**
 output/logs/**
+!output/tables/manuscript/
+!output/tables/manuscript/table1_formatted.xlsx
+!output/tables/manuscript/manuscript_table2_formatted.xlsx
+!output/tables/manuscript/food_group_effects_formatted.xlsx
 
 # Keep directory placeholders
 !data/raw/.gitkeep

@@ -56,13 +56,9 @@ foreach pkg in distinct mdesc {
     }
 }
 
-* Run full pipeline explicitly, including all intermediate scripts.
+* Run streamlined pipeline for manuscript-table outputs.
 foreach step in ///
     "01_dataprep_master.do" ///
-    "02_descriptive_tables.do" ///
-    "03_main_analysis.do" ///
-    "04_moderation_analysis.do" ///
-    "05_sensitivity_exposure.do" ///
     "06_output_exports.do" {
     capture noisily do "$project_root/`step'"
     if _rc {
@@ -71,4 +67,4 @@ foreach step in ///
     }
 }
 
-di as txt "Pipeline complete: 01-06 scripts executed."
+di as txt "Pipeline complete: 01 and 06 scripts executed."

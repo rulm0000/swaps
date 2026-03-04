@@ -31,7 +31,6 @@ input str40 key str220 value
 "consort_combined_dropout_rule" "Report CONSORT value=14; keep count_visit diagnostic=34"
 "note_not_sure_recode" "notice_* ==2 treated as 0 in rnotice_*"
 end
-export delimited using "$ManuscriptTables/replication_definitions.csv", replace
 
 * 2) Participant flow.
 use "$CTData/dataset A_nutri and carbon.dta", clear
@@ -92,7 +91,6 @@ post `ppf' ("Dropped before intervention (count_visit diagnostic)") (.) (`noint_
 post `ppf' ("Analyzed")                                  (1201) (`alloc_control') (`alloc_climate') (`alloc_health') (`alloc_combined') ("computed")
 postclose `ppf'
 use `pf', clear
-export delimited using "$ManuscriptTables/manuscript_participant_flow.csv", replace
 
 * 3) Baseline (Table 1).
 use "$CTData/dataset D_Visit1 demog polsup.dta", clear
@@ -207,7 +205,76 @@ foreach lvl in 1 3 5 {
 }
 postclose `pbl'
 use `baseline', clear
-export delimited using "$ManuscriptTables/manuscript_table1_baseline.csv", replace
+
+* Table 1 display formatting.
+gen rowid = _n
+foreach arm in overall control climate health combined {
+    gen str8 pctdisp_`arm' = cond(missing(`arm'_pct), "", ///
+        cond(`arm'_pct<1 & `arm'_pct>0, string(round(`arm'_pct,0.1),"%4.1f") + "%", ///
+        string(round(`arm'_pct,1),"%4.0f") + "%"))
+    gen str20 celldisp_`arm' = trim(string(`arm'_n,"%12.0gc")) + " (" + pctdisp_`arm' + ")"
+}
+
+tempfile table1_display
+tempname ptd
+postfile `ptd' int row_order byte is_heading str80 label ///
+    str20 overall str20 control str20 climate str20 health str20 combined using `table1_display', replace
+
+local row_order = 0
+foreach ch in "Age" "Gender" "Latino" "Race" "Education" "Household income, annual" "Household size" {
+    if "`ch'" != "Latino" {
+        local ++row_order
+        post `ptd' (`row_order') (1) ("`ch'") ("") ("") ("") ("") ("")
+    }
+    preserve
+    keep if characteristic=="`ch'"
+    sort rowid
+    forvalues i=1/`=_N' {
+        local lbl = level[`i']
+        if "`ch'" != "Latino" local lbl = "    `lbl'"
+        local ++row_order
+        post `ptd' (`row_order') (0) ("`lbl'") ///
+            (celldisp_overall[`i']) (celldisp_control[`i']) (celldisp_climate[`i']) ///
+            (celldisp_health[`i']) (celldisp_combined[`i'])
+    }
+    restore
+}
+postclose `ptd'
+
+use `table1_display', clear
+putexcel set "$ManuscriptTables/table1_formatted.xlsx", replace
+putexcel A1=("Table 1. Participant characteristics, n=1,201 US adults"), bold
+putexcel B2:F2=("Participants, N (%)"), merge hcenter bold
+putexcel A3=("Characteristic"), bold
+putexcel B3=("Overall"), bold hcenter
+putexcel C3=("Control"), bold hcenter
+putexcel D3=("Climate swaps"), bold hcenter
+putexcel E3=("Health Swaps"), bold hcenter
+putexcel F3=("Climate + health swaps"), bold hcenter
+putexcel B4=("n=1,201"), italic hcenter
+putexcel C4=("n=300"), italic hcenter
+putexcel D4=("n=301"), italic hcenter
+putexcel E4=("n=300"), italic hcenter
+putexcel F4=("n=300"), italic hcenter
+
+forvalues i=1/`=_N' {
+    local xrow = `i' + 4
+    local lbl = label[`i']
+    local ov = overall[`i']
+    local ct = control[`i']
+    local cl = climate[`i']
+    local he = health[`i']
+    local co = combined[`i']
+    if is_heading[`i']==1 {
+        putexcel A`xrow'=("`lbl'"), bold
+    }
+    else {
+        putexcel A`xrow'=("`lbl'")
+    }
+    putexcel B`xrow'=("`ov'") C`xrow'=("`ct'") D`xrow'=("`cl'") E`xrow'=("`he'") F`xrow'=("`co'")
+}
+local note_row = _N + 6
+putexcel A`note_row'=("Note. Missing data ranged from 0.0% to 0.2%."), italic
 
 * 4) Descriptive swaps offered/accepted.
 use "$CTData/dataset A_nutri and carbon.dta", clear
@@ -215,7 +282,6 @@ keep if inlist(visit_store,2,3) & inlist(treatment_svy,2,3,4)
 collapse (mean) ttl_swapoffer prop_swapaccept (sd) sd_swapoffer=ttl_swapoffer sd_prop_swapaccept=prop_swapaccept, by(treatment_svy)
 gen arm = cond(treatment_svy==3,"climate swaps",cond(treatment_svy==2,"health swaps","climate + health swaps"))
 order arm ttl_swapoffer sd_swapoffer prop_swapaccept sd_prop_swapaccept treatment_svy
-export delimited using "$ManuscriptTables/swaps_offered_accepted_summary.csv", replace
 
 * 5) Figure 4 source (acceptability proportions).
 use "$CTData/dataset C_Visit3 other outcomes.dta", clear

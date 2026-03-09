@@ -44,7 +44,7 @@ if _rc {
 capture noisily cd "$project_root"
 
 * Ensure required user-written commands are available.
-foreach pkg in distinct mdesc {
+foreach pkg in distinct mdesc qqvalue {
     capture which `pkg'
     if _rc {
         capture noisily ssc install `pkg', replace

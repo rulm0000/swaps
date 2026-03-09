@@ -15,27 +15,41 @@ tempname pfg plines
 postfile `pfg' str80 outcome str35 food_group str12 arm int arm_code ///
     double b double ll double ul double p using `fgraw', replace
 
-use "$CTData/Int dataset A_nutri and carbon_all rows.dta", clear
+use "$CTData/dataset A_nutri and carbon.dta", clear
 keep if inlist(visit_store,1,2,3)
 gen visit = visit_store
 
-* Construct food-group outcomes using label-group path.
-levelsof k01aim3_label_group, local(food_groups)
-foreach fg of local food_groups {
-    local varname = subinstr("`fg'", " ", "_", .)
-    bysort pid visit: egen `varname'_npm_temp = mean(npm_100) if k01aim3_label_group == "`fg'"
-    bysort pid visit: egen `varname'_npm = max(`varname'_npm_temp)
-    drop `varname'_npm_temp
-
-    bysort pid visit: egen `varname'_cf_temp = mean(carbonfootprint_g) if k01aim3_label_group == "`fg'"
-    bysort pid visit: egen `varname'_carbon = max(`varname'_cf_temp)
-    drop `varname'_cf_temp
+* If finalized dataset A does not include precomputed food-group outcomes,
+* build them from the all-rows file and merge by pid/visit.
+capture confirm variable k01aim3_beverages_npm
+if _rc {
+    tempfile fgvars
+    preserve
+    use "$CTData/Int dataset A_nutri and carbon_all rows.dta", clear
+    keep if inlist(visit_store,1,2,3)
+    gen visit = visit_store
+    levelsof k01aim3_label_group, local(food_groups)
+    foreach fg of local food_groups {
+        local varname = subinstr("`fg'", " ", "_", .)
+        bysort pid visit: egen `varname'_npm_temp = mean(npm_100) if k01aim3_label_group == "`fg'"
+        bysort pid visit: egen `varname'_npm = max(`varname'_npm_temp)
+        drop `varname'_npm_temp
+        bysort pid visit: egen `varname'_cf_temp = mean(carbonfootprint_g) if k01aim3_label_group == "`fg'"
+        bysort pid visit: egen `varname'_carbon = max(`varname'_cf_temp)
+        drop `varname'_cf_temp
+    }
+    keep pid visit_store ///
+        k01aim3_beverages_npm k01aim3_meals_npm k01aim3_proteins_npm k01aim3_milk_dairy_npm k01aim3_soups_npm k01aim3_sweets_snacks_npm ///
+        k01aim3_beverages_carbon k01aim3_meals_carbon k01aim3_proteins_carbon k01aim3_milk_dairy_carbon k01aim3_soups_carbon k01aim3_sweets_snacks_carbon
+    duplicates drop pid visit_store, force
+    save `fgvars', replace
+    restore
+    merge 1:1 pid visit_store using `fgvars', nogen keep(master match)
 }
 
 keep pid treatment_svy visit_store ///
     k01aim3_beverages_npm k01aim3_meals_npm k01aim3_proteins_npm k01aim3_milk_dairy_npm k01aim3_soups_npm k01aim3_sweets_snacks_npm ///
     k01aim3_beverages_carbon k01aim3_meals_carbon k01aim3_proteins_carbon k01aim3_milk_dairy_carbon k01aim3_soups_carbon k01aim3_sweets_snacks_carbon
-duplicates drop pid visit_store, force
 gen visit = visit_store
 
 local foodgroupdvs_npm "k01aim3_beverages_npm k01aim3_meals_npm k01aim3_proteins_npm k01aim3_milk_dairy_npm k01aim3_soups_npm k01aim3_sweets_snacks_npm"

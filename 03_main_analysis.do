@@ -14,8 +14,7 @@ capture mkdir "$ManuscriptFigures"
 tempfile t2long
 tempname pt2
 postfile `pt2' str30 domain str80 outcome str12 arm int arm_code ///
-    double b double ll double ul double d ///
-    double baseline_mean_control double baseline_sd_control using `t2long', replace
+    double b double ll double ul double d double p using `t2long', replace
 
 * Selection outcomes.
 use "$CTData/dataset A_nutri and carbon.dta", clear
@@ -25,10 +24,6 @@ local plabels   `" "Healthfulness, Ofcom score (1-100)" "Carbon footprint, kg CO
 local i = 1
 foreach out of local poutcomes {
     local lbl : word `i' of `plabels'
-    quietly summarize `out' if treatment_svy==1 & visit_store==1
-    local sd0 = r(sd)
-    local m0  = r(mean)
-
     mixed `out' i.treatment_svy##i.visit_store || pid:
     quietly count if visit_store==2 & `out'<.
     local n2 = r(N)
@@ -37,13 +32,13 @@ foreach out of local poutcomes {
     local n23 = `n2'+`n3'
 
     lincom ((`n2'/`n23')*(3.treatment_svy#2.visit_store)) + ((`n3'/`n23')*(3.treatment_svy#3.visit_store))
-    post `pt2' ("Selection outcomes") ("`lbl'") ("climate") (3) (r(estimate)) (r(lb)) (r(ub)) (r(estimate)/`sd0') (`m0') (`sd0')
+    post `pt2' ("Selection outcomes") ("`lbl'") ("climate") (3) (r(estimate)) (r(lb)) (r(ub)) (.) (r(p))
 
     lincom ((`n2'/`n23')*(2.treatment_svy#2.visit_store)) + ((`n3'/`n23')*(2.treatment_svy#3.visit_store))
-    post `pt2' ("Selection outcomes") ("`lbl'") ("health") (2) (r(estimate)) (r(lb)) (r(ub)) (r(estimate)/`sd0') (`m0') (`sd0')
+    post `pt2' ("Selection outcomes") ("`lbl'") ("health") (2) (r(estimate)) (r(lb)) (r(ub)) (.) (r(p))
 
     lincom ((`n2'/`n23')*(4.treatment_svy#2.visit_store)) + ((`n3'/`n23')*(4.treatment_svy#3.visit_store))
-    post `pt2' ("Selection outcomes") ("`lbl'") ("combined") (4) (r(estimate)) (r(lb)) (r(ub)) (r(estimate)/`sd0') (`m0') (`sd0')
+    post `pt2' ("Selection outcomes") ("`lbl'") ("combined") (4) (r(estimate)) (r(lb)) (r(ub)) (.) (r(p))
 
     local ++i
 }
@@ -56,10 +51,6 @@ local ylabels   `" "Health" "Climate impact" "Taste" "Negative emotions" "Positi
 local i = 1
 foreach out of local youtcomes {
     local lbl : word `i' of `ylabels'
-    quietly summarize `out' if treatment_svy==1 & visit==1
-    local sd0 = r(sd)
-    local m0  = r(mean)
-
     mixed `out' i.treatment_svy##i.visit || pid:
     quietly count if visit==2 & `out'<.
     local n2 = r(N)
@@ -68,13 +59,13 @@ foreach out of local youtcomes {
     local n23 = `n2'+`n3'
 
     lincom ((`n2'/`n23')*(3.treatment_svy#2.visit)) + ((`n3'/`n23')*(3.treatment_svy#3.visit))
-    post `pt2' ("Psychological outcomes") ("`lbl'") ("climate") (3) (r(estimate)) (r(lb)) (r(ub)) (r(estimate)/`sd0') (`m0') (`sd0')
+    post `pt2' ("Psychological outcomes") ("`lbl'") ("climate") (3) (r(estimate)) (r(lb)) (r(ub)) (.) (r(p))
 
     lincom ((`n2'/`n23')*(2.treatment_svy#2.visit)) + ((`n3'/`n23')*(2.treatment_svy#3.visit))
-    post `pt2' ("Psychological outcomes") ("`lbl'") ("health") (2) (r(estimate)) (r(lb)) (r(ub)) (r(estimate)/`sd0') (`m0') (`sd0')
+    post `pt2' ("Psychological outcomes") ("`lbl'") ("health") (2) (r(estimate)) (r(lb)) (r(ub)) (.) (r(p))
 
     lincom ((`n2'/`n23')*(4.treatment_svy#2.visit)) + ((`n3'/`n23')*(4.treatment_svy#3.visit))
-    post `pt2' ("Psychological outcomes") ("`lbl'") ("combined") (4) (r(estimate)) (r(lb)) (r(ub)) (r(estimate)/`sd0') (`m0') (`sd0')
+    post `pt2' ("Psychological outcomes") ("`lbl'") ("combined") (4) (r(estimate)) (r(lb)) (r(ub)) (.) (r(p))
 
     local ++i
 }
@@ -82,16 +73,124 @@ postclose `pt2'
 
 use `t2long', clear
 
-* Manuscript-style Table 2 Excel export.
+/*
+We manually entered the Table 2 Cohen's d values rather than calculating them in
+Stata. Because treatment effects were estimated with mixed-effects models, we did
+not use Stata's esize command, which does not support mixed-effects models for this
+purpose. Instead, we used the Campbell Collaboration online calculator:
+https://www.campbellcollaboration.org/calculator/
+
+Calculator path used:
+- Cohen's d
+- Regression
+- HLM/mixed effects
+
+Inputs entered into the calculator:
+- Unstandardized regression coefficient (the ADE/B shown in the table)
+- Standard error of this coefficient
+- Standard deviation of the dependent variable, pooled across both groups and all
+  time points (that is, a plain summarize of the DV)
+- Sample sizes for treatment and control groups
+- ICC (available in Stata after mixed via estat icc)
+- Total number of clusters (3 here, corresponding to the number of time points)
+
+We hand-calculated all Cohen's d values with this calculator. Clayton completed the
+first pass and Amanda independently repeated the calculations to double check them.
+*/
+tempfile t2calc_d
+save `t2calc_d', replace
+
+clear
+input str30 domain str80 outcome str12 arm double d_manual
+"Selection outcomes" "Healthfulness, Ofcom score (1-100)" "climate" 0.25
+"Selection outcomes" "Healthfulness, Ofcom score (1-100)" "health" 0.50
+"Selection outcomes" "Healthfulness, Ofcom score (1-100)" "combined" 0.43
+"Selection outcomes" "Carbon footprint, kg CO2-eq per kg" "climate" -0.42
+"Selection outcomes" "Carbon footprint, kg CO2-eq per kg" "health" -0.05
+"Selection outcomes" "Carbon footprint, kg CO2-eq per kg" "combined" -0.35
+"Selection outcomes" "Energy density, kcal per 100g" "climate" -0.16
+"Selection outcomes" "Energy density, kcal per 100g" "health" -0.18
+"Selection outcomes" "Energy density, kcal per 100g" "combined" -0.18
+"Selection outcomes" "Sugar density, grams per 100g" "climate" -0.08
+"Selection outcomes" "Sugar density, grams per 100g" "health" -0.26
+"Selection outcomes" "Sugar density, grams per 100g" "combined" -0.28
+"Selection outcomes" "Sodium density, milligrams per 100g" "climate" -0.03
+"Selection outcomes" "Sodium density, milligrams per 100g" "health" -0.15
+"Selection outcomes" "Sodium density, milligrams per 100g" "combined" -0.12
+"Selection outcomes" "Saturated fat density, grams per 100g" "climate" -0.33
+"Selection outcomes" "Saturated fat density, grams per 100g" "health" -0.34
+"Selection outcomes" "Saturated fat density, grams per 100g" "combined" -0.42
+"Selection outcomes" "Fiber density, grams per 100g" "climate" 0.01
+"Selection outcomes" "Fiber density, grams per 100g" "health" 0.25
+"Selection outcomes" "Fiber density, grams per 100g" "combined" 0.16
+"Selection outcomes" "Protein density, grams per 100g" "climate" -0.10
+"Selection outcomes" "Protein density, grams per 100g" "health" 0.08
+"Selection outcomes" "Protein density, grams per 100g" "combined" 0.00
+"Selection outcomes" "Total spending, US dollars" "climate" -0.23
+"Selection outcomes" "Total spending, US dollars" "health" -0.17
+"Selection outcomes" "Total spending, US dollars" "combined" -0.14
+"Psychological outcomes" "Health" "climate" 0.10
+"Psychological outcomes" "Health" "health" 0.12
+"Psychological outcomes" "Health" "combined" 0.10
+"Psychological outcomes" "Climate impact" "climate" 0.47
+"Psychological outcomes" "Climate impact" "health" 0.01
+"Psychological outcomes" "Climate impact" "combined" 0.40
+"Psychological outcomes" "Taste" "climate" -0.02
+"Psychological outcomes" "Taste" "health" -0.06
+"Psychological outcomes" "Taste" "combined" -0.07
+"Psychological outcomes" "Negative emotions" "climate" 0.23
+"Psychological outcomes" "Negative emotions" "health" 0.18
+"Psychological outcomes" "Negative emotions" "combined" 0.23
+"Psychological outcomes" "Positive emotions" "climate" 0.01
+"Psychological outcomes" "Positive emotions" "health" 0.05
+"Psychological outcomes" "Positive emotions" "combined" 0.01
+"Psychological outcomes" "Injunctive norms to buy healthy foods" "climate" 0.04
+"Psychological outcomes" "Injunctive norms to buy healthy foods" "health" 0.04
+"Psychological outcomes" "Injunctive norms to buy healthy foods" "combined" 0.01
+"Psychological outcomes" "Descriptive norms about buying healthy foods" "climate" -0.05
+"Psychological outcomes" "Descriptive norms about buying healthy foods" "health" -0.03
+"Psychological outcomes" "Descriptive norms about buying healthy foods" "combined" -0.09
+"Psychological outcomes" "Injunctive norms to low-climate-impact foods" "climate" 0.04
+"Psychological outcomes" "Injunctive norms to low-climate-impact foods" "health" 0.01
+"Psychological outcomes" "Injunctive norms to low-climate-impact foods" "combined" 0.03
+"Psychological outcomes" "Descriptive norms about buying low-climate-impact foods" "climate" 0.03
+"Psychological outcomes" "Descriptive norms about buying low-climate-impact foods" "health" -0.05
+"Psychological outcomes" "Descriptive norms about buying low-climate-impact foods" "combined" 0.02
+end
+tempfile t2manual_d
+save `t2manual_d', replace
+
+use `t2calc_d', clear
+merge 1:1 domain outcome arm using `t2manual_d', nogen assert(match)
+replace d = d_manual
+drop d_manual
+
+* Supplemental table: Holm-corrected p-values within each outcome (3 arm tests).
+preserve
+keep domain outcome arm p
+egen family_id = group(domain outcome)
+gen double p_holm = .
+levelsof family_id, local(fid_list)
+foreach fid of local fid_list {
+    qqvalue p if family_id==`fid', method(holm) qvalue(p_holm_tmp)
+    replace p_holm = p_holm_tmp if family_id==`fid'
+    drop p_holm_tmp
+}
+reshape wide p p_holm, i(domain outcome) j(arm) string
+order domain outcome pclimate p_holmclimate phealth p_holmhealth pcombined p_holmcombined
+export excel using "$ManuscriptTables/manuscript_table2_holm_corrected_pvalues.xlsx", firstrow(variables) replace
+restore
+
+* Table 2 Excel export.
 tempfile t2wide_display t2layout
 preserve
-keep domain outcome arm b ll ul d
+keep domain outcome arm b ll ul d p
 gen double rep_b = cond(domain=="Selection outcomes", round(b,0.1), round(b,0.01))
 gen double rep_ll = cond(domain=="Selection outcomes", round(ll,0.1), round(ll,0.01))
 gen double rep_ul = cond(domain=="Selection outcomes", round(ul,0.1), round(ul,0.01))
 gen double rep_d = round(d,0.01)
 
-reshape wide b ll ul d rep_b rep_ll rep_ul rep_d, i(domain outcome) j(arm) string
+reshape wide b ll ul d p rep_b rep_ll rep_ul rep_d, i(domain outcome) j(arm) string
 save `t2wide_display', replace
 restore
 
@@ -133,12 +232,15 @@ replace row_label_display = "        " + row_label if indent==2
 
 gen str16 b_climate_txt = ""
 gen str24 ci_climate_txt = ""
+gen str10 p_climate_txt = ""
 gen str12 d_climate_txt = ""
 gen str16 b_health_txt = ""
 gen str24 ci_health_txt = ""
+gen str10 p_health_txt = ""
 gen str12 d_health_txt = ""
 gen str16 b_combined_txt = ""
 gen str24 ci_combined_txt = ""
+gen str10 p_combined_txt = ""
 gen str12 d_combined_txt = ""
 
 replace b_climate_txt = strtrim(string(rep_bclimate,"%9.1f")) if row_type=="outcome" & domain=="Selection outcomes"
@@ -155,6 +257,19 @@ replace ci_climate_txt = "(" + strtrim(string(rep_llclimate,"%9.2f")) + ", " + s
 replace ci_health_txt = "(" + strtrim(string(rep_llhealth,"%9.2f")) + ", " + strtrim(string(rep_ulhealth,"%9.2f")) + ")" if row_type=="outcome" & domain=="Psychological outcomes"
 replace ci_combined_txt = "(" + strtrim(string(rep_llcombined,"%9.2f")) + ", " + strtrim(string(rep_ulcombined,"%9.2f")) + ")" if row_type=="outcome" & domain=="Psychological outcomes"
 
+replace p_climate_txt = "<0.001" if row_type=="outcome" & pclimate<0.001
+replace p_health_txt = "<0.001" if row_type=="outcome" & phealth<0.001
+replace p_combined_txt = "<0.001" if row_type=="outcome" & pcombined<0.001
+replace p_climate_txt = strtrim(string(round(pclimate,0.001),"%9.3f")) if row_type=="outcome" & pclimate>=0.001
+replace p_health_txt = strtrim(string(round(phealth,0.001),"%9.3f")) if row_type=="outcome" & phealth>=0.001
+replace p_combined_txt = strtrim(string(round(pcombined,0.001),"%9.3f")) if row_type=="outcome" & pcombined>=0.001
+replace p_climate_txt = regexr(p_climate_txt,"0+$","") if row_type=="outcome" & pclimate>=0.001
+replace p_health_txt = regexr(p_health_txt,"0+$","") if row_type=="outcome" & phealth>=0.001
+replace p_combined_txt = regexr(p_combined_txt,"0+$","") if row_type=="outcome" & pcombined>=0.001
+replace p_climate_txt = regexr(p_climate_txt,"\\.$","") if row_type=="outcome" & pclimate>=0.001
+replace p_health_txt = regexr(p_health_txt,"\\.$","") if row_type=="outcome" & phealth>=0.001
+replace p_combined_txt = regexr(p_combined_txt,"\\.$","") if row_type=="outcome" & pcombined>=0.001
+
 replace d_climate_txt = strtrim(string(rep_dclimate,"%9.2f")) if row_type=="outcome"
 replace d_health_txt = strtrim(string(rep_dhealth,"%9.2f")) if row_type=="outcome"
 replace d_combined_txt = strtrim(string(rep_dcombined,"%9.2f")) if row_type=="outcome"
@@ -168,31 +283,34 @@ gen byte is_subgroup = (row_type=="subgroup")
 label variable row_label_display ""
 label variable b_climate_txt ""
 label variable ci_climate_txt ""
+label variable p_climate_txt ""
 label variable d_climate_txt ""
 label variable b_health_txt ""
 label variable ci_health_txt ""
+label variable p_health_txt ""
 label variable d_health_txt ""
 label variable b_combined_txt ""
 label variable ci_combined_txt ""
+label variable p_combined_txt ""
 label variable d_combined_txt ""
 
 putexcel set "$ManuscriptTables/manuscript_table2_formatted.xlsx", replace
-export excel row_label_display b_climate_txt ci_climate_txt d_climate_txt ///
-    b_health_txt ci_health_txt d_health_txt ///
-    b_combined_txt ci_combined_txt d_combined_txt ///
+export excel row_label_display b_climate_txt ci_climate_txt p_climate_txt d_climate_txt ///
+    b_health_txt ci_health_txt p_health_txt d_health_txt ///
+    b_combined_txt ci_combined_txt p_combined_txt d_combined_txt ///
     using "$ManuscriptTables/manuscript_table2_formatted.xlsx", ///
     sheet("Table2") sheetreplace cell(A5)
 
 putexcel set "$ManuscriptTables/manuscript_table2_formatted.xlsx", sheet("Table2") modify
 putexcel A1 = ("Table 2. Effects of the climate, health, and climate + health swaps on food and beverage purchases and psychological outcomes, n=1,201 US adults")
-putexcel A3 = ("Outcomes") B3 = ("Climate swaps") E3 = ("Health swaps") H3 = ("Climate + health swaps")
-putexcel B3:D3, merge hcenter
-putexcel E3:G3, merge hcenter
-putexcel H3:J3, merge hcenter
-putexcel B4 = ("B") C4 = ("(95%CI)") D4 = ("Cohen's d")
-putexcel E4 = ("B") F4 = ("(95%CI)") G4 = ("Cohen's d")
-putexcel H4 = ("B") I4 = ("(95%CI)") J4 = ("Cohen's d")
-putexcel A3:J4, bold
+putexcel A3 = ("Outcomes") B3 = ("Climate swaps") F3 = ("Health swaps") J3 = ("Climate + health swaps")
+putexcel B3:E3, merge hcenter
+putexcel F3:I3, merge hcenter
+putexcel J3:M3, merge hcenter
+putexcel B4 = ("B") C4 = ("(95%CI)") D4 = ("p-value") E4 = ("Cohen's d")
+putexcel F4 = ("B") G4 = ("(95%CI)") H4 = ("p-value") I4 = ("Cohen's d")
+putexcel J4 = ("B") K4 = ("(95%CI)") L4 = ("p-value") M4 = ("Cohen's d")
+putexcel A3:M4, bold
 
 forvalues i = 1/`=_N' {
     local excel_row = `i' + 4
@@ -204,25 +322,25 @@ forvalues i = 1/`=_N' {
 
     local sgc = sig_climate[`i']
     if `sgc'==1 {
-        putexcel B`excel_row' C`excel_row' D`excel_row', bold
+        putexcel B`excel_row' C`excel_row' D`excel_row' E`excel_row', bold
     }
     local sgh = sig_health[`i']
     if `sgh'==1 {
-        putexcel E`excel_row' F`excel_row' G`excel_row', bold
+        putexcel F`excel_row' G`excel_row' H`excel_row' I`excel_row', bold
     }
     local sgb = sig_combined[`i']
     if `sgb'==1 {
-        putexcel H`excel_row' I`excel_row' J`excel_row', bold
+        putexcel J`excel_row' K`excel_row' L`excel_row' M`excel_row', bold
     }
 }
 
-putexcel A3:J3, border(bottom)
-putexcel A4:J4, border(bottom)
+putexcel A3:M3, border(bottom)
+putexcel A4:M4, border(bottom)
 putexcel A3:A27, border(right)
-putexcel D3:D27, border(right)
-putexcel G3:G27, border(right)
-putexcel J3:J27, border(right)
-putexcel A3:J27, txtwrap
+putexcel E3:E27, border(right)
+putexcel I3:I27, border(right)
+putexcel M3:M27, border(right)
+putexcel A3:M27, txtwrap
 
 * Figure 3 source.
 use "$CTData/dataset A_nutri and carbon.dta", clear

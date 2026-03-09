@@ -27,7 +27,7 @@ input str40 key str220 value
 "purchase_visit_variable" "visit_store"
 "psych_visit_variable" "visit"
 "acceptability_visit" "visit 3 only"
-"cohen_d_denominator" "SD of control arm at baseline (visit 1)"
+"cohen_d_denominator" "Manually entered from Campbell Collaboration mixed-effects calculator; see 03_main_analysis.do comment"
 "consort_combined_dropout_rule" "Report CONSORT value=14; keep count_visit diagnostic=34"
 "note_not_sure_recode" "notice_* ==2 treated as 0 in rnotice_*"
 end

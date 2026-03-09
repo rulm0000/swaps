@@ -74,10 +74,7 @@ postclose `pt2'
 use `t2long', clear
 
 /*
-We manually entered the Table 2 Cohen's d values rather than calculating them in
-Stata. Because treatment effects were estimated with mixed-effects models, we did
-not use Stata's esize command, which does not support mixed-effects models for this
-purpose. Instead, we used the Campbell Collaboration online calculator:
+We manually entered the Table 2 Cohen's d values. We used the Campbell Collaboration online calculator:
 https://www.campbellcollaboration.org/calculator/
 
 Calculator path used:
@@ -94,8 +91,6 @@ Inputs entered into the calculator:
 - ICC (available in Stata after mixed via estat icc)
 - Total number of clusters (3 here, corresponding to the number of time points)
 
-We hand-calculated all Cohen's d values with this calculator. Clayton completed the
-first pass and Amanda independently repeated the calculations to double check them.
 */
 tempfile t2calc_d
 save `t2calc_d', replace

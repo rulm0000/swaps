@@ -50,7 +50,7 @@ swaps/
   - `02_descriptive_tables.do` (Table 1 and S1 figure source)
   - `03_main_analysis.do` (Table 2 and Figure 3 source)
   - `05_sensitivity_exposure.do` (S6 table)
-  - `08_table2_holm_supplement.do` (S5 Bonferroni-Holm corrected p-values table)
+  - `08_s5_bonferroni_holm_supplement.do` (S5 Bonferroni-Holm corrected p-values table)
 
 ## Notes
 

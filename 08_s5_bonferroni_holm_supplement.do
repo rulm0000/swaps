@@ -4,6 +4,7 @@ if "$project_root" == "" {
     do "00_global_paths.do"
 }
 
+* S5 supplement: Bonferroni-Holm corrected p-values for the Table 2 outcomes.
 global CTData "$Data_share/Output"
 
 global ManuscriptTables "$OutTables/manuscript"

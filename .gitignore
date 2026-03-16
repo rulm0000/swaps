@@ -27,9 +27,13 @@ output/tables/**
 output/figures/**
 output/logs/**
 !output/tables/manuscript/
-!output/tables/manuscript/table1_formatted.xlsx
-!output/tables/manuscript/manuscript_table2_formatted.xlsx
-!output/tables/manuscript/food_group_effects_formatted.xlsx
+!output/tables/manuscript/table1_participant_characteristics.xlsx
+!output/tables/manuscript/table2_effects_of_swaps.xlsx
+!output/tables/manuscript/s5_table_bh_corrected_pvalues.xlsx
+!output/tables/manuscript/s6_table_effects_by_food_group.xlsx
+!output/figures/manuscript/
+!output/figures/manuscript/figure3_source_primary_means_se_by_visit.csv
+!output/figures/manuscript/s1_figure_acceptability_of_online_store.csv
 
 # Keep directory placeholders
 !data/raw/.gitkeep

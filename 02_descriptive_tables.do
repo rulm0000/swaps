@@ -242,7 +242,7 @@ foreach ch in "Age" "Gender" "Latino" "Race" "Education" "Household income, annu
 postclose `ptd'
 
 use `table1_display', clear
-putexcel set "$ManuscriptTables/table1_formatted.xlsx", replace
+putexcel set "$ManuscriptTables/table1_participant_characteristics.xlsx", replace
 putexcel A1=("Table 1. Participant characteristics, n=1,201 US adults"), bold
 putexcel B2:F2=("Participants, N (%)"), merge hcenter bold
 putexcel A3=("Characteristic"), bold
@@ -309,4 +309,4 @@ foreach v in healthlabel_help healthlabel_like healthlabel_approve ///
 }
 postclose `p4'
 use `fig4', clear
-export delimited using "$ManuscriptFigures/figure4_acceptability_proportions.csv", replace
+export delimited using "$ManuscriptFigures/s1_figure_acceptability_of_online_store.csv", replace

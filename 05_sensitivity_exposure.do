@@ -179,8 +179,8 @@ drop sort_order
 rename row_label outcome
 order outcome climate_b climate_ci health_b health_ci combined_b combined_ci
 
-putexcel set "$ManuscriptTables/food_group_effects_formatted.xlsx", replace
-putexcel A1 = ("S5 Table. Effects of the climate, health, and climate + health swaps on the healthfulness and carbon footprint of food and beverage purchases, by food group, n=1,201 US adults")
+putexcel set "$ManuscriptTables/s6_table_effects_by_food_group.xlsx", replace
+putexcel A1 = ("S6 Table. Effects of the climate, health, and climate + health swaps on the healthfulness and carbon footprint of food and beverage purchases, by food group, n=1,201 US adults")
 putexcel A3 = ("Outcome")
 putexcel B3 = ("Climate swaps")
 putexcel D3 = ("Health swaps")

@@ -6,6 +6,8 @@ SWAPS replication pipeline for manuscript tables and figure source exports.
 
 1. Open Stata in `swaps/`.
 2. Run `do "00_global_paths.do"`.
+3. The public GitHub entrypoint reruns exports from prepared files in `data/share/Output/`.
+4. `01_dataprep_master.do` is left in the repo for private use but is skipped by default because it imports restricted/licensed product data that is not uploaded.
 
 ## Generated Deliverables
 
@@ -29,7 +31,16 @@ SWAPS replication pipeline for manuscript tables and figure source exports.
 ```text
 swaps/
 |-- 00_global_paths.do
+|-- 01_dataprep_master.do
 |-- 06_output_exports.do
+|-- data/
+|   `-- share/
+|      `-- Output/
+|         |-- dataset A_nutri and carbon.dta
+|         |-- dataset B_psych data with demog_add-ons.dta
+|         |-- dataset C_Visit3 other outcomes.dta
+|         |-- dataset D_Visit1 demog polsup.dta
+|         `-- Int dataset A_nutri and carbon_all rows.dta
 |-- output/
 |   |-- tables/
 |   |   `-- manuscript/
@@ -45,14 +56,17 @@ swaps/
 
 ## Pipeline Steps
 
-- `00_global_paths.do`: entrypoint, sets paths, runs `01_dataprep_master.do` then `06_output_exports.do`.
+- `00_global_paths.do`: public entrypoint, sets paths, skips the private raw-data rebuild, and runs `06_output_exports.do` from `data/share/Output/`.
+- `01_dataprep_master.do`: private raw-data rebuild that depends on restricted/licensed product data not included on GitHub.
 - `06_output_exports.do`: orchestrates manuscript exports:
   - `02_descriptive_tables.do` (Table 1 and S1 figure source)
   - `03_main_analysis.do` (Table 2 and Figure 3 source)
   - `05_sensitivity_exposure.do` (S6 table)
   - `08_s5_bonferroni_holm_supplement.do` (S5 Bonferroni-Holm corrected p-values table)
+- `07_ctgov_reporting_replication.do`: rebuilds the CT.gov reporting package in `output/tables/ctgov/` and also writes the uploaded-baseline validation outputs there using the validator stored in `../ClinicalTrials_data/`.
 
 ## Notes
 
 - Prepared analysis datasets are read from `data/share/Output/`.
+- The private product input under `data/Launch 2025/Product info/` is excluded from GitHub because it contains restricted/licensed product data.
 - Figure source files are written to `output/figures/manuscript/`.

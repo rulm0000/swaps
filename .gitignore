@@ -19,6 +19,9 @@ __pycache__/
 *.Rhistory
 *.RData
 
+# Private/licensed product data
+data/Launch 2025/Product info/**
+
 # Never commit real data or outputs by default
 data/raw/**
 data/intermediate/**
@@ -39,6 +42,13 @@ output/logs/**
 !data/raw/.gitkeep
 !data/intermediate/.gitkeep
 !data/derived/.gitkeep
+!data/share/
+!data/share/Output/
+!data/share/Output/dataset A_nutri and carbon.dta
+!data/share/Output/dataset B_psych data with demog_add-ons.dta
+!data/share/Output/dataset C_Visit3 other outcomes.dta
+!data/share/Output/dataset D_Visit1 demog polsup.dta
+!data/share/Output/Int dataset A_nutri and carbon_all rows.dta
 !output/tables/.gitkeep
 !output/figures/.gitkeep
 !output/logs/.gitkeep

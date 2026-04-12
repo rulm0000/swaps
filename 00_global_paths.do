@@ -58,7 +58,7 @@ foreach pkg in distinct mdesc qqvalue {
 
 * Run streamlined pipeline for manuscript-table outputs.
 foreach step in ///
-    "01_dataprep_master.do" ///
+*   "01_dataprep_master.do" ///  // Public GitHub version skips raw rebuild because it depends on restricted/licensed product data that cannot be uploaded.
     "06_output_exports.do" {
     capture noisily do "$project_root/`step'"
     if _rc {
@@ -67,4 +67,4 @@ foreach step in ///
     }
 }
 
-di as txt "Pipeline complete: 01 and 06 scripts executed."
+di as txt "Pipeline complete: 06 script executed using prepared data/share/Output inputs."

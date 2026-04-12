@@ -118,9 +118,27 @@ reshape wide b ll ul p, i(outcome food_group) j(arm) string
 gen str20 climate_b = trim(string(bclimate,"%9.1f"))
 gen str20 health_b = trim(string(bhealth,"%9.1f"))
 gen str20 combined_b = trim(string(bcombined,"%9.1f"))
-gen str25 climate_ci = "(" + trim(string(llclimate,"%9.1f")) + ", " + trim(string(ulclimate,"%9.1f")) + ")"
-gen str25 health_ci = "(" + trim(string(llhealth,"%9.1f")) + ", " + trim(string(ulhealth,"%9.1f")) + ")"
-gen str25 combined_ci = "(" + trim(string(llcombined,"%9.1f")) + ", " + trim(string(ulcombined,"%9.1f")) + ")"
+replace climate_b = trim(string(bclimate,"%9.2f")) if bclimate!=0 & round(bclimate,0.1)==0
+replace health_b = trim(string(bhealth,"%9.2f")) if bhealth!=0 & round(bhealth,0.1)==0
+replace combined_b = trim(string(bcombined,"%9.2f")) if bcombined!=0 & round(bcombined,0.1)==0
+
+gen str12 climate_ll_txt = trim(string(llclimate,"%9.1f"))
+gen str12 climate_ul_txt = trim(string(ulclimate,"%9.1f"))
+gen str12 health_ll_txt = trim(string(llhealth,"%9.1f"))
+gen str12 health_ul_txt = trim(string(ulhealth,"%9.1f"))
+gen str12 combined_ll_txt = trim(string(llcombined,"%9.1f"))
+gen str12 combined_ul_txt = trim(string(ulcombined,"%9.1f"))
+
+replace climate_ll_txt = trim(string(llclimate,"%9.2f")) if llclimate!=0 & round(llclimate,0.1)==0
+replace climate_ul_txt = trim(string(ulclimate,"%9.2f")) if ulclimate!=0 & round(ulclimate,0.1)==0
+replace health_ll_txt = trim(string(llhealth,"%9.2f")) if llhealth!=0 & round(llhealth,0.1)==0
+replace health_ul_txt = trim(string(ulhealth,"%9.2f")) if ulhealth!=0 & round(ulhealth,0.1)==0
+replace combined_ll_txt = trim(string(llcombined,"%9.2f")) if llcombined!=0 & round(llcombined,0.1)==0
+replace combined_ul_txt = trim(string(ulcombined,"%9.2f")) if ulcombined!=0 & round(ulcombined,0.1)==0
+
+gen str25 climate_ci = "(" + climate_ll_txt + ", " + climate_ul_txt + ")"
+gen str25 health_ci = "(" + health_ll_txt + ", " + health_ul_txt + ")"
+gen str25 combined_ci = "(" + combined_ll_txt + ", " + combined_ul_txt + ")"
 gen byte climate_sig = (pclimate<0.05)
 gen byte health_sig = (phealth<0.05)
 gen byte combined_sig = (pcombined<0.05)

@@ -820,6 +820,7 @@ save "post-store_all_long.dta", replace
 *************
 **#*PRODUCT Dataset
 
+* Private-only raw rebuild note: this import uses restricted/licensed product data, so the public GitHub entrypoint skips `01_dataprep_master.do` and relies on prepared files in data/share/Output instead.
 import delimited "$Data/Launch 2025/Product info/product_dataset-no kcal100.csv", varnames(1) bindquote(strict) clear 
 
 destring *, replace

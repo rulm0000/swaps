@@ -7,32 +7,34 @@ set more off
 
 global CTData "C:/Users/culm/Box/K01 Aim 3 Swaps_share/Output"
 global CTOut  "C:/Users/culm/Box/K01 Aim 3 - Swaps Study/Data/Clayton Work/swaps/output/tables/ctgov"
+global CTOutMirror "C:/Users/culm/Box/K01 Aim 3 - Swaps Study/Data/Clayton Work/ClinicalTrials_data"
 
 capture mkdir "$CTOut"
+capture mkdir "$CTOutMirror"
 
 tempfile crosswalk
 tempname pxc
-postfile `pxc' int outcome_id str28 domain str120 outcome_desc str80 source_dataset str40 variable_name str40 timepoint str80 notes using `crosswalk', replace
+postfile `pxc' int outcome_id str28 domain str120 outcome_desc str80 source_dataset str40 variable_name str60 timepoint str80 notes using `crosswalk', replace
 
-post `pxc' (1)  ("Purchase")      ("Ofcom Nutrient Profiling Model score")                         ("dataset A_nutri and carbon.dta") ("npm_avg")              ("Follow-up (visits 2-3)") ("Per-pid mean across visits 2-3")
-post `pxc' (2)  ("Purchase")      ("Carbon footprint")                                               ("dataset A_nutri and carbon.dta") ("carbonfootprint_avg")  ("Follow-up (visits 2-3)") ("Per-pid mean across visits 2-3")
-post `pxc' (3)  ("Purchase")      ("Calorie density (kcal per 100g)")                               ("dataset A_nutri and carbon.dta") ("kcal_avg")             ("Follow-up (visits 2-3)") ("Per-pid mean across visits 2-3")
-post `pxc' (4)  ("Purchase")      ("Sugar density (g per 100g)")                                    ("dataset A_nutri and carbon.dta") ("sugar_avg")            ("Follow-up (visits 2-3)") ("Per-pid mean across visits 2-3")
-post `pxc' (5)  ("Purchase")      ("Sodium density (mg per 100g)")                                  ("dataset A_nutri and carbon.dta") ("sodium_avg")           ("Follow-up (visits 2-3)") ("Per-pid mean across visits 2-3")
-post `pxc' (6)  ("Purchase")      ("Saturated fat density (g per 100g)")                            ("dataset A_nutri and carbon.dta") ("satfat_avg")           ("Follow-up (visits 2-3)") ("Per-pid mean across visits 2-3")
-post `pxc' (7)  ("Purchase")      ("Fiber density (g per 100g)")                                    ("dataset A_nutri and carbon.dta") ("fib_avg")              ("Follow-up (visits 2-3)") ("Per-pid mean across visits 2-3")
-post `pxc' (8)  ("Purchase")      ("Protein density (g per 100g)")                                  ("dataset A_nutri and carbon.dta") ("protein_avg")          ("Follow-up (visits 2-3)") ("Per-pid mean across visits 2-3")
-post `pxc' (9)  ("Purchase")      ("Total spending (USD)")                                           ("dataset A_nutri and carbon.dta") ("spend_ttl")            ("Follow-up (visits 2-3)") ("Per-pid mean across visits 2-3")
+post `pxc' (1)  ("Purchase")      ("Ofcom Nutrient Profiling Model score")                         ("dataset A_nutri and carbon.dta") ("npm_avg")              ("Follow-up (visits 2 to 3)") ("Per-pid mean across visits 2-3")
+post `pxc' (2)  ("Purchase")      ("Carbon footprint")                                               ("dataset A_nutri and carbon.dta") ("carbonfootprint_avg")  ("Follow-up (visits 2 to 3)") ("Per-pid mean across visits 2-3")
+post `pxc' (3)  ("Purchase")      ("Calorie density (kcal per 100g)")                               ("dataset A_nutri and carbon.dta") ("kcal_avg")             ("Follow-up (visits 2 to 3)") ("Per-pid mean across visits 2-3")
+post `pxc' (4)  ("Purchase")      ("Sugar density (g per 100g)")                                    ("dataset A_nutri and carbon.dta") ("sugar_avg")            ("Follow-up (visits 2 to 3)") ("Per-pid mean across visits 2-3")
+post `pxc' (5)  ("Purchase")      ("Sodium density (mg per 100g)")                                  ("dataset A_nutri and carbon.dta") ("sodium_avg")           ("Follow-up (visits 2 to 3)") ("Per-pid mean across visits 2-3")
+post `pxc' (6)  ("Purchase")      ("Saturated fat density (g per 100g)")                            ("dataset A_nutri and carbon.dta") ("satfat_avg")           ("Follow-up (visits 2 to 3)") ("Per-pid mean across visits 2-3")
+post `pxc' (7)  ("Purchase")      ("Fiber density (g per 100g)")                                    ("dataset A_nutri and carbon.dta") ("fib_avg")              ("Follow-up (visits 2 to 3)") ("Per-pid mean across visits 2-3")
+post `pxc' (8)  ("Purchase")      ("Protein density (g per 100g)")                                  ("dataset A_nutri and carbon.dta") ("protein_avg")          ("Follow-up (visits 2 to 3)") ("Per-pid mean across visits 2-3")
+post `pxc' (9)  ("Purchase")      ("Total spending (USD)")                                           ("dataset A_nutri and carbon.dta") ("spend_ttl")            ("Follow-up (visits 2 to 3)") ("Per-pid mean across visits 2-3")
 
-post `pxc' (10) ("Psychological") ("Thinking about health")                                          ("dataset B_psych data with demog_add-ons.dta") ("elab_health")        ("Follow-up (visits 2-3)") ("Per-pid mean across visits 2-3")
-post `pxc' (11) ("Psychological") ("Thinking about climate impact")                                  ("dataset B_psych data with demog_add-ons.dta") ("elab_envr")          ("Follow-up (visits 2-3)") ("Per-pid mean across visits 2-3")
-post `pxc' (12) ("Psychological") ("Thinking about taste")                                           ("dataset B_psych data with demog_add-ons.dta") ("elab_taste")         ("Follow-up (visits 2-3)") ("Per-pid mean across visits 2-3")
-post `pxc' (13) ("Psychological") ("Negative emotions while shopping")                               ("dataset B_psych data with demog_add-ons.dta") ("negaffect_avg")      ("Follow-up (visits 2-3)") ("Per-pid mean across visits 2-3")
-post `pxc' (14) ("Psychological") ("Positive emotions while shopping")                               ("dataset B_psych data with demog_add-ons.dta") ("posaffect_avg")      ("Follow-up (visits 2-3)") ("Per-pid mean across visits 2-3")
-post `pxc' (15) ("Psychological") ("Injunctive norms to buy healthy foods")                          ("dataset B_psych data with demog_add-ons.dta") ("injunctive_heath")   ("Follow-up (visits 2-3)") ("Per-pid mean across visits 2-3")
-post `pxc' (16) ("Psychological") ("Descriptive norms to buy healthy foods")                         ("dataset B_psych data with demog_add-ons.dta") ("descriptive_health") ("Follow-up (visits 2-3)") ("Per-pid mean across visits 2-3")
-post `pxc' (17) ("Psychological") ("Injunctive norms to buy low-climate-impact foods")               ("dataset B_psych data with demog_add-ons.dta") ("injunctive_climate") ("Follow-up (visits 2-3)") ("Per-pid mean across visits 2-3")
-post `pxc' (18) ("Psychological") ("Descriptive norms to buy low-climate-impact foods")              ("dataset B_psych data with demog_add-ons.dta") ("descriptive_climate") ("Follow-up (visits 2-3)") ("Per-pid mean across visits 2-3")
+post `pxc' (10) ("Psychological") ("Thinking about health")                                          ("dataset B_psych data with demog_add-ons.dta") ("elab_health")        ("Follow-up (visits 2 to 3)") ("Per-pid mean across visits 2-3")
+post `pxc' (11) ("Psychological") ("Thinking about climate impact")                                  ("dataset B_psych data with demog_add-ons.dta") ("elab_envr")          ("Follow-up (visits 2 to 3)") ("Per-pid mean across visits 2-3")
+post `pxc' (12) ("Psychological") ("Thinking about taste")                                           ("dataset B_psych data with demog_add-ons.dta") ("elab_taste")         ("Follow-up (visits 2 to 3)") ("Per-pid mean across visits 2-3")
+post `pxc' (13) ("Psychological") ("Negative emotions while shopping")                               ("dataset B_psych data with demog_add-ons.dta") ("negaffect_avg")      ("Follow-up (visits 2 to 3)") ("Per-pid mean across visits 2-3")
+post `pxc' (14) ("Psychological") ("Positive emotions while shopping")                               ("dataset B_psych data with demog_add-ons.dta") ("posaffect_avg")      ("Follow-up (visits 2 to 3)") ("Per-pid mean across visits 2-3")
+post `pxc' (15) ("Psychological") ("Injunctive norms to buy healthy foods")                          ("dataset B_psych data with demog_add-ons.dta") ("injunctive_heath")   ("Follow-up (visits 2 to 3)") ("Per-pid mean across visits 2-3")
+post `pxc' (16) ("Psychological") ("Descriptive norms to buy healthy foods")                         ("dataset B_psych data with demog_add-ons.dta") ("descriptive_health") ("Follow-up (visits 2 to 3)") ("Per-pid mean across visits 2-3")
+post `pxc' (17) ("Psychological") ("Injunctive norms to buy low-climate-impact foods")               ("dataset B_psych data with demog_add-ons.dta") ("injunctive_climate") ("Follow-up (visits 2 to 3)") ("Per-pid mean across visits 2-3")
+post `pxc' (18) ("Psychological") ("Descriptive norms to buy low-climate-impact foods")              ("dataset B_psych data with demog_add-ons.dta") ("descriptive_climate") ("Follow-up (visits 2 to 3)") ("Per-pid mean across visits 2-3")
 
 post `pxc' (19) ("Acceptability") ("Perceived helpfulness of nutrition labels")                      ("dataset C_Visit3 other outcomes.dta") ("healthlabel_help")      ("Visit 3") ("Raw 1-5 score")
 post `pxc' (20) ("Acceptability") ("Perceived helpfulness of climate labels")                        ("dataset C_Visit3 other outcomes.dta") ("climatelabel_help")     ("Visit 3") ("Raw 1-5 score")
@@ -64,6 +66,7 @@ count if treatment_svy==2 & visit_store==1
 local alloc_health = r(N)
 count if treatment_svy==4 & visit_store==1
 local alloc_combined = r(N)
+local alloc_overall = `alloc_control' + `alloc_climate' + `alloc_health' + `alloc_combined'
 
 count if treatment_svy==1 & visit_store==2
 local recv2_control = r(N)
@@ -249,7 +252,7 @@ export excel using "$CTOut/ctgov_reporting_package.xlsx", sheet("BaselineCharact
 
 tempfile outstats
 tempname pos
-postfile `pos' int outcome_id str28 domain str120 outcome_desc str40 variable_name str30 timepoint ///
+postfile `pos' int outcome_id str28 domain str120 outcome_desc str40 variable_name str60 timepoint ///
     int overall_n int control_n int climate_n int health_n int combined_n ///
     double overall_mean double overall_sd ///
     double control_mean double control_sd ///
@@ -257,7 +260,7 @@ postfile `pos' int outcome_id str28 domain str120 outcome_desc str40 variable_na
     double health_mean double health_sd ///
     double combined_mean double combined_sd using `outstats', replace
 
-* Purchase outcomes: per-pid average across follow-up visits (2-3).
+* Purchase outcomes: per-pid average across visits 2-3 with observed nonmissing Ns.
 use "$CTData/dataset A_nutri and carbon.dta", clear
 keep if inlist(visit_store,2,3)
 collapse (mean) npm_avg carbonfootprint_avg kcal_avg sugar_avg sodium_avg satfat_avg fib_avg protein_avg spend_ttl, by(pid treatment_svy)
@@ -277,22 +280,24 @@ foreach pair in ///
     gettoken odesc rest : rest
     gettoken varname : rest
 
-    quietly summarize `varname'
+    quietly count if `varname'<.
     local on = r(N)
+    quietly summarize `varname'
     local om = r(mean)
     local os = r(sd)
     foreach a in 1 3 2 4 {
-        quietly summarize `varname' if treatment_svy==`a'
+        quietly count if `varname'<. & treatment_svy==`a'
         local n`a' = r(N)
+        quietly summarize `varname' if treatment_svy==`a'
         local m`a' = r(mean)
         local s`a' = r(sd)
     }
-    post `pos' (`oid') ("`dom'") ("`odesc'") ("`varname'") ("Follow-up (visits 2-3)") ///
+    post `pos' (`oid') ("`dom'") ("`odesc'") ("`varname'") ("Follow-up (visits 2 to 3)") ///
         (`on') (`n1') (`n3') (`n2') (`n4') ///
         (`om') (`os') (`m1') (`s1') (`m3') (`s3') (`m2') (`s2') (`m4') (`s4')
 }
 
-* Psychological outcomes: per-pid average across follow-up visits (2-3).
+* Psychological outcomes: per-pid average across visits 2-3 with observed nonmissing Ns.
 use "$CTData/dataset B_psych data with demog_add-ons.dta", clear
 keep if inlist(visit,2,3)
 collapse (mean) elab_health elab_envr elab_taste negaffect_avg posaffect_avg injunctive_heath descriptive_health injunctive_climate descriptive_climate, by(pid treatment_svy)
@@ -312,17 +317,19 @@ foreach pair in ///
     gettoken odesc rest : rest
     gettoken varname : rest
 
-    quietly summarize `varname'
+    quietly count if `varname'<.
     local on = r(N)
+    quietly summarize `varname'
     local om = r(mean)
     local os = r(sd)
     foreach a in 1 3 2 4 {
-        quietly summarize `varname' if treatment_svy==`a'
+        quietly count if `varname'<. & treatment_svy==`a'
         local n`a' = r(N)
+        quietly summarize `varname' if treatment_svy==`a'
         local m`a' = r(mean)
         local s`a' = r(sd)
     }
-    post `pos' (`oid') ("`dom'") ("`odesc'") ("`varname'") ("Follow-up (visits 2-3)") ///
+    post `pos' (`oid') ("`dom'") ("`odesc'") ("`varname'") ("Follow-up (visits 2 to 3)") ///
         (`on') (`n1') (`n3') (`n2') (`n4') ///
         (`om') (`os') (`m1') (`s1') (`m3') (`s3') (`m2') (`s2') (`m4') (`s4')
 }
@@ -348,13 +355,15 @@ foreach pair in ///
     gettoken odesc rest : rest
     gettoken varname : rest
 
-    quietly summarize `varname'
+    quietly count if `varname'<.
     local on = r(N)
+    quietly summarize `varname'
     local om = r(mean)
     local os = r(sd)
     foreach a in 1 3 2 4 {
-        quietly summarize `varname' if treatment_svy==`a'
+        quietly count if `varname'<. & treatment_svy==`a'
         local n`a' = r(N)
+        quietly summarize `varname' if treatment_svy==`a'
         local m`a' = r(mean)
         local s`a' = r(sd)
     }
@@ -445,5 +454,31 @@ postclose `pqc'
 use `qcpf', clear
 export delimited using "$CTOut/ctgov_qc_participant_flow.csv", replace
 export excel using "$CTOut/ctgov_reporting_package.xlsx", sheet("QC_ParticipantFlow") firstrow(variables) sheetreplace
+
+* Uploaded CT.gov baseline validation from XML.
+local CTGovUploadRoot "C:/Users/culm/Box/K01 Aim 3 - Swaps Study/Data/Clayton Work/ClinicalTrials_data"
+capture noisily shell python "`CTGovUploadRoot'/09_ctgov_uploaded_baseline_validation.py" ///
+    --xml "`CTGovUploadRoot'/76925.xml" ///
+    --internal-dta "$CTData/dataset D_Visit1 demog polsup.dta" ///
+    --outdir "$CTOut"
+if _rc {
+    di as err "Uploaded CT.gov baseline validation failed."
+    exit _rc
+}
+
+* Mirror CT.gov package outputs into the ClinicalTrials_data working folder.
+local mirror_files ///
+    "ctgov_outcome_crosswalk.csv ctgov_participant_flow.csv ctgov_baseline_characteristics.csv ///
+     ctgov_outcomes_raw_means_sds.csv ctgov_qc_baseline_vs_table1.csv ctgov_qc_participant_flow.csv ///
+     ctgov_reporting_package.xlsx ctgov_uploaded_baseline_xml_raw.csv ctgov_uploaded_baseline_xml_normalized.csv ///
+     ctgov_uploaded_baseline_internal_reference.csv ctgov_uploaded_baseline_comparison.csv ctgov_uploaded_baseline_validation.xlsx"
+
+foreach f of local mirror_files {
+    capture copy "$CTOut/`f'" "$CTOutMirror/`f'", replace
+    if _rc {
+        di as err "Could not mirror `f' to $CTOutMirror."
+        exit _rc
+    }
+}
 
 display as result "CT.gov replication package created in: $CTOut"

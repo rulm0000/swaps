@@ -1,15 +1,14 @@
 * swaps - global path launcher
-* Purpose: select project_root by user, load setup, then run full pipeline
 
-set more off
 version 19
+set more off
 
 * Global file path rule
 if "`c(username)'" == "ag" {
-    global project_root "."
+    global project_root "/Users/ag/Documents/GitHub/swaps"
 }
 else if "`c(username)'" == "culm" {
-    global project_root "C:/Users/culm/Box/K01 Aim 3 - Swaps Study/Data/Clayton Work/swaps"
+    global project_root "."
 }
 else {
     global project_root "."
@@ -20,6 +19,8 @@ if _rc {
     di as err "Could not enter project_root."
     exit 198
 }
+
+global project_root "`c(pwd)'"
 
 do "setup.do"
 
@@ -56,8 +57,6 @@ foreach pkg in distinct mdesc qqvalue {
     }
 }
 
-* Run streamlined pipeline for manuscript-table outputs.
-* Public GitHub default skips 01_dataprep_master.do (private raw rebuild); run that file manually if needed.
 foreach step in "06_output_exports.do" {
     capture noisily do "$project_root/`step'"
     if _rc {

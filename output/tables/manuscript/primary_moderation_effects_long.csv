@@ -1,0 +1,19 @@
+outcome_order,outcome_label,moderator_order,moderator_label,arm,arm_code,b,ll,ul,p
+1,"Healthfulness, Ofcom score (1-100)",1,Younger vs older (agecat 1 vs 2-4),health,2,-2.272293860192061,-4.937834738577561,.3932470181934393,.0947590812608858
+1,"Healthfulness, Ofcom score (1-100)",1,Younger vs older (agecat 1 vs 2-4),climate,3,-1.568205833794267,-4.235345904903107,1.098934237314573,.2491544715832327
+1,"Healthfulness, Ofcom score (1-100)",1,Younger vs older (agecat 1 vs 2-4),combined,4,.0103512676992426,-2.675846540630459,2.696549076028944,.9939738550555735
+1,"Healthfulness, Ofcom score (1-100)",2,Health-consciousness (continuous),health,2,-.4994205469263272,-2.076745930683824,1.07790483683117,.5348803004873746
+1,"Healthfulness, Ofcom score (1-100)",2,Health-consciousness (continuous),climate,3,.2696033297495636,-1.266478089020472,1.805684748519599,.7308458903274702
+1,"Healthfulness, Ofcom score (1-100)",2,Health-consciousness (continuous),combined,4,-.2737178946161959,-1.890303517132236,1.342867727899844,.7399963252990309
+1,"Healthfulness, Ofcom score (1-100)",3,Climate-concern (continuous),health,2,.1627310923674061,-1.216804441765019,1.542266626499831,.8171602945523285
+1,"Healthfulness, Ofcom score (1-100)",3,Climate-concern (continuous),climate,3,1.218199070080211,-.1320747529114452,2.568472893071867,.0770185474631176
+1,"Healthfulness, Ofcom score (1-100)",3,Climate-concern (continuous),combined,4,-.1235019357345964,-1.500825663883289,1.253821792414096,.8604933750609247
+2,"Carbon footprint, kg CO2-eq per kg",1,Younger vs older (agecat 1 vs 2-4),health,2,1.523260009798261,-.9567557875322115,4.003275807128734,.2286525887229824
+2,"Carbon footprint, kg CO2-eq per kg",1,Younger vs older (agecat 1 vs 2-4),climate,3,1.558882814517216,-.9227648696509618,4.040530498685393,.2182556739216888
+2,"Carbon footprint, kg CO2-eq per kg",1,Younger vs older (agecat 1 vs 2-4),combined,4,.481454149714241,-2.016639694090709,2.979547993519191,.7056229096387308
+2,"Carbon footprint, kg CO2-eq per kg",2,Health-consciousness (continuous),health,2,-.5403545481056125,-2.006024354527899,.9253152583166737,.4699330264744498
+2,"Carbon footprint, kg CO2-eq per kg",2,Health-consciousness (continuous),climate,3,.7039350443380873,-.7233545362160464,2.131224624892221,.3337197795820153
+2,"Carbon footprint, kg CO2-eq per kg",2,Health-consciousness (continuous),combined,4,-1.223101338033141,-2.724906837825829,.2787041617595476,.1104363256792516
+2,"Carbon footprint, kg CO2-eq per kg",3,Climate-concern (continuous),health,2,-.9298232881141202,-2.213514008002937,.3538674317746964,.1557031060060754
+2,"Carbon footprint, kg CO2-eq per kg",3,Climate-concern (continuous),climate,3,.2329335885295131,-1.023723009269973,1.489590186328999,.7163819212782069
+2,"Carbon footprint, kg CO2-eq per kg",3,Climate-concern (continuous),combined,4,-.8053614511639529,-2.086446991225336,.4757240888974306,.2178960040410692

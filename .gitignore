@@ -34,6 +34,10 @@ output/logs/**
 !output/tables/manuscript/table2_effects_of_swaps.xlsx
 !output/tables/manuscript/s5_table_bh_corrected_pvalues.xlsx
 !output/tables/manuscript/s6_table_effects_by_food_group.xlsx
+!output/tables/manuscript/primary_moderation_joint_tests.csv
+!output/tables/manuscript/primary_moderation_effects_long.csv
+!output/tables/manuscript/primary_moderation_table_formatted.csv
+!output/tables/manuscript/primary_moderation_table_formatted.xlsx
 !output/figures/manuscript/
 !output/figures/manuscript/figure3_source_primary_means_se_by_visit.csv
 !output/figures/manuscript/s1_figure_acceptability_of_online_store.csv

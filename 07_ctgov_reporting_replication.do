@@ -1,13 +1,32 @@
-version 18
-clear all
+version 19
 set more off
 
 * Standalone CT.gov reporting replication for NCT06648226.
 * Does not depend on legacy analysis scripts.
 
-global CTData "C:/Users/culm/Box/K01 Aim 3 Swaps_share/Output"
-global CTOut  "C:/Users/culm/Box/K01 Aim 3 - Swaps Study/Data/Clayton Work/swaps/output/tables/ctgov"
-global CTOutMirror "C:/Users/culm/Box/K01 Aim 3 - Swaps Study/Data/Clayton Work/ClinicalTrials_data"
+if "`c(username)'" == "ag" {
+    global project_root "/Users/ag/Documents/GitHub/swaps"
+}
+else if "`c(username)'" == "culm" {
+    global project_root "."
+}
+else {
+    global project_root "."
+}
+
+capture cd "$project_root"
+if _rc {
+    di as err "Could not enter project_root."
+    exit 198
+}
+
+global project_root "`c(pwd)'"
+
+do "setup.do"
+
+global CTData "$Data_share/Output"
+global CTOut "$Repo/output/tables/ctgov"
+global CTOutMirror "$Repo/../ClinicalTrials_data"
 
 capture mkdir "$CTOut"
 capture mkdir "$CTOutMirror"
@@ -456,7 +475,7 @@ export delimited using "$CTOut/ctgov_qc_participant_flow.csv", replace
 export excel using "$CTOut/ctgov_reporting_package.xlsx", sheet("QC_ParticipantFlow") firstrow(variables) sheetreplace
 
 * Uploaded CT.gov baseline validation from XML.
-local CTGovUploadRoot "C:/Users/culm/Box/K01 Aim 3 - Swaps Study/Data/Clayton Work/ClinicalTrials_data"
+local CTGovUploadRoot "$CTOutMirror"
 capture noisily shell python "`CTGovUploadRoot'/09_ctgov_uploaded_baseline_validation.py" ///
     --xml "`CTGovUploadRoot'/76925.xml" ///
     --internal-dta "$CTData/dataset D_Visit1 demog polsup.dta" ///

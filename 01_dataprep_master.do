@@ -1,4 +1,5 @@
-
+version 19
+set more off
 
 *Dataset B: Psychological outcomes
 *Dataset D: Table 1, moderators, policy support

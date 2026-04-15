@@ -57,9 +57,8 @@ foreach pkg in distinct mdesc qqvalue {
 }
 
 * Run streamlined pipeline for manuscript-table outputs.
-foreach step in ///
-*   "01_dataprep_master.do" ///  // Public GitHub version skips raw rebuild because it depends on restricted/licensed product data that cannot be uploaded.
-    "06_output_exports.do" {
+* Public GitHub default skips 01_dataprep_master.do (private raw rebuild); run that file manually if needed.
+foreach step in "06_output_exports.do" {
     capture noisily do "$project_root/`step'"
     if _rc {
         di as err "`step' failed."

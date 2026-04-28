@@ -19,8 +19,9 @@ __pycache__/
 *.Rhistory
 *.RData
 
-# Private/licensed product data
-data/Launch 2025/Product info/**
+# Private/raw data excluded from the public repo
+data/Input/**
+data/Launch 2025/**
 
 # Never commit real data or outputs by default
 data/raw/**

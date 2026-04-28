@@ -9,6 +9,12 @@ SWAPS replication pipeline for manuscript tables and figure source exports.
 3. The public GitHub entrypoint reruns exports from prepared files in `data/share/Output/`.
 4. `01_dataprep_master.do` is left in the repo for private use but is skipped by default because it imports restricted/licensed product data that is not uploaded.
 
+## Public Data
+
+The public repo includes cleaned/merged participant-level analysis datasets in `data/share/Output/`. These files include survey responses, participant store selections, and Green Choice-derived variables only for products selected by participants.
+
+The full Green Choice product catalog is not included. Raw survey exports, raw store purchase exports, and the restricted product input used to build `product data-kcal100.dta` are also excluded from the public repo. The public analysis begins from the prepared `.dta` files listed below.
+
 ## Generated Deliverables
 
 - `output/tables/manuscript/table1_participant_characteristics.xlsx`
@@ -65,7 +71,7 @@ swaps/
 ## Pipeline Steps
 
 - `00_global_paths.do`: public entrypoint, sets paths, skips the private raw-data rebuild, and runs `06_output_exports.do` from `data/share/Output/`.
-- `01_dataprep_master.do`: private raw-data rebuild that depends on restricted/licensed product data not included on GitHub.
+- `01_dataprep_master.do`: private provenance/raw-data rebuild retained for project maintainers; it depends on restricted raw survey, store, and Green Choice product inputs that are not included on GitHub.
 - `06_output_exports.do`: orchestrates manuscript exports:
   - `02_descriptive_tables.do` (Table 1 and S1 figure source)
   - `03_main_analysis.do` (Table 2 and Figure 3 source)
@@ -77,6 +83,7 @@ swaps/
 ## Notes
 
 - Prepared analysis datasets are read from `data/share/Output/`.
-- The private product input under `data/Launch 2025/Product info/` is excluded from GitHub because it contains restricted/licensed product data.
+- Raw inputs under `data/Input/` and `data/Launch 2025/` are excluded from GitHub.
+- The private product input under `data/Launch 2025/Product info/` is excluded because it contains the full restricted/licensed Green Choice product data.
 - Figure source files are written to `output/figures/manuscript/`.
 - Files produced in `output/tables/ctgov/` by `07_ctgov_reporting_replication.do` are gitignored unless you add explicit exceptions.

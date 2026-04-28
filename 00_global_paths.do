@@ -42,6 +42,20 @@ if _rc {
     di as err "Could not enter $Data_share/Output. Check local swaps/data/share path."
     exit 198
 }
+
+foreach f in ///
+    "dataset A_nutri and carbon.dta" ///
+    "dataset B_psych data with demog_add-ons.dta" ///
+    "dataset C_Visit3 other outcomes.dta" ///
+    "dataset D_Visit1 demog polsup.dta" ///
+    "Int dataset A_nutri and carbon_all rows.dta" {
+    capture confirm file "$Data_share/Output/`f'"
+    if _rc {
+        di as err "Missing prepared analysis dataset: $Data_share/Output/`f'"
+        exit 601
+    }
+}
+
 capture noisily cd "$project_root"
 
 * Ensure required user-written commands are available.

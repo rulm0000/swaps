@@ -161,15 +161,36 @@ replace d = d_manual
 drop d_manual
 
 * Table 2 Excel export.
-tempfile t2wide_display t2layout
+tempfile t2holm t2wide_display t2layout
 preserve
-keep domain outcome arm b ll ul d p
+keep domain outcome arm p
+* Reviewer requested treating the two primary outcomes as one 6-test family.
+gen byte primary_family = domain=="Selection outcomes" & ///
+    inlist(outcome, "Healthfulness, Ofcom score (1-100)", "Carbon footprint, kg CO2-eq per kg")
+egen family_id = group(domain outcome)
+quietly summarize family_id
+replace family_id = r(max) + 1 if primary_family
+gen double p_holm = .
+levelsof family_id, local(fid_list)
+foreach fid of local fid_list {
+    qqvalue p if family_id==`fid', method(holm) qvalue(p_holm_tmp)
+    replace p_holm = p_holm_tmp if family_id==`fid'
+    drop p_holm_tmp
+}
+keep domain outcome arm p_holm
+save `t2holm', replace
+restore
+
+merge 1:1 domain outcome arm using `t2holm', nogen assert(match)
+
+preserve
+keep domain outcome arm b ll ul d p p_holm
 gen double rep_b = cond(domain=="Selection outcomes", round(b,0.1), round(b,0.01))
 gen double rep_ll = cond(domain=="Selection outcomes", round(ll,0.1), round(ll,0.01))
 gen double rep_ul = cond(domain=="Selection outcomes", round(ul,0.1), round(ul,0.01))
 gen double rep_d = round(d,0.01)
 
-reshape wide b ll ul d p rep_b rep_ll rep_ul rep_d, i(domain outcome) j(arm) string
+reshape wide b ll ul d p p_holm rep_b rep_ll rep_ul rep_d, i(domain outcome) j(arm) string
 save `t2wide_display', replace
 restore
 
@@ -212,14 +233,17 @@ replace row_label_display = "        " + row_label if indent==2
 gen str16 b_climate_txt = ""
 gen str24 ci_climate_txt = ""
 gen str10 p_climate_txt = ""
+gen str10 p_holm_climate_txt = ""
 gen str12 d_climate_txt = ""
 gen str16 b_health_txt = ""
 gen str24 ci_health_txt = ""
 gen str10 p_health_txt = ""
+gen str10 p_holm_health_txt = ""
 gen str12 d_health_txt = ""
 gen str16 b_combined_txt = ""
 gen str24 ci_combined_txt = ""
 gen str10 p_combined_txt = ""
+gen str10 p_holm_combined_txt = ""
 gen str12 d_combined_txt = ""
 
 replace b_climate_txt = strtrim(string(rep_bclimate,"%9.1f")) if row_type=="outcome" & domain=="Selection outcomes"
@@ -249,6 +273,19 @@ replace p_climate_txt = strtrim(string(round(pclimate,0.01),"%9.2f")) if row_typ
 replace p_health_txt = strtrim(string(round(phealth,0.01),"%9.2f")) if row_type=="outcome" & inrange(phealth,0.05,0.994999999)
 replace p_combined_txt = strtrim(string(round(pcombined,0.01),"%9.2f")) if row_type=="outcome" & inrange(pcombined,0.05,0.994999999)
 
+replace p_holm_climate_txt = "<0.001" if row_type=="outcome" & p_holmclimate<0.001
+replace p_holm_health_txt = "<0.001" if row_type=="outcome" & p_holmhealth<0.001
+replace p_holm_combined_txt = "<0.001" if row_type=="outcome" & p_holmcombined<0.001
+replace p_holm_climate_txt = strtrim(string(round(p_holmclimate,0.001),"%9.3f")) if row_type=="outcome" & inrange(p_holmclimate,0.001,0.049999999)
+replace p_holm_health_txt = strtrim(string(round(p_holmhealth,0.001),"%9.3f")) if row_type=="outcome" & inrange(p_holmhealth,0.001,0.049999999)
+replace p_holm_combined_txt = strtrim(string(round(p_holmcombined,0.001),"%9.3f")) if row_type=="outcome" & inrange(p_holmcombined,0.001,0.049999999)
+replace p_holm_climate_txt = ">0.99" if row_type=="outcome" & p_holmclimate>=0.995
+replace p_holm_health_txt = ">0.99" if row_type=="outcome" & p_holmhealth>=0.995
+replace p_holm_combined_txt = ">0.99" if row_type=="outcome" & p_holmcombined>=0.995
+replace p_holm_climate_txt = strtrim(string(round(p_holmclimate,0.01),"%9.2f")) if row_type=="outcome" & inrange(p_holmclimate,0.05,0.994999999)
+replace p_holm_health_txt = strtrim(string(round(p_holmhealth,0.01),"%9.2f")) if row_type=="outcome" & inrange(p_holmhealth,0.05,0.994999999)
+replace p_holm_combined_txt = strtrim(string(round(p_holmcombined,0.01),"%9.2f")) if row_type=="outcome" & inrange(p_holmcombined,0.05,0.994999999)
+
 replace d_climate_txt = strtrim(string(rep_dclimate,"%9.2f")) if row_type=="outcome"
 replace d_health_txt = strtrim(string(rep_dhealth,"%9.2f")) if row_type=="outcome"
 replace d_combined_txt = strtrim(string(rep_dcombined,"%9.2f")) if row_type=="outcome"
@@ -263,33 +300,36 @@ label variable row_label_display ""
 label variable b_climate_txt ""
 label variable ci_climate_txt ""
 label variable p_climate_txt ""
+label variable p_holm_climate_txt ""
 label variable d_climate_txt ""
 label variable b_health_txt ""
 label variable ci_health_txt ""
 label variable p_health_txt ""
+label variable p_holm_health_txt ""
 label variable d_health_txt ""
 label variable b_combined_txt ""
 label variable ci_combined_txt ""
 label variable p_combined_txt ""
+label variable p_holm_combined_txt ""
 label variable d_combined_txt ""
 
 putexcel set "$ManuscriptTables/table2_effects_of_swaps.xlsx", replace
-export excel row_label_display b_climate_txt ci_climate_txt p_climate_txt d_climate_txt ///
-    b_health_txt ci_health_txt p_health_txt d_health_txt ///
-    b_combined_txt ci_combined_txt p_combined_txt d_combined_txt ///
+export excel row_label_display b_climate_txt ci_climate_txt p_climate_txt p_holm_climate_txt d_climate_txt ///
+    b_health_txt ci_health_txt p_health_txt p_holm_health_txt d_health_txt ///
+    b_combined_txt ci_combined_txt p_combined_txt p_holm_combined_txt d_combined_txt ///
     using "$ManuscriptTables/table2_effects_of_swaps.xlsx", ///
     sheet("Table2") sheetreplace cell(A5)
 
 putexcel set "$ManuscriptTables/table2_effects_of_swaps.xlsx", sheet("Table2") modify
 putexcel A1 = ("Table 2. Effects of the climate, health, and climate + health swaps on food and beverage purchases and psychological outcomes, n=1,201 US adults")
-putexcel A3 = ("Outcomes") B3 = ("Climate swaps") F3 = ("Health swaps") J3 = ("Climate + health swaps")
-putexcel B3:E3, merge hcenter
-putexcel F3:I3, merge hcenter
-putexcel J3:M3, merge hcenter
-putexcel B4 = ("B") C4 = ("(95%CI)") D4 = ("p-value") E4 = ("Cohen's d")
-putexcel F4 = ("B") G4 = ("(95%CI)") H4 = ("p-value") I4 = ("Cohen's d")
-putexcel J4 = ("B") K4 = ("(95%CI)") L4 = ("p-value") M4 = ("Cohen's d")
-putexcel A3:M4, bold
+putexcel A3 = ("Outcomes") B3 = ("Climate swaps") G3 = ("Health swaps") L3 = ("Climate + health swaps")
+putexcel B3:F3, merge hcenter
+putexcel G3:K3, merge hcenter
+putexcel L3:P3, merge hcenter
+putexcel B4 = ("B") C4 = ("(95%CI)") D4 = ("Uncorr. p-value") E4 = ("Corr. p-value") F4 = ("Cohen's d")
+putexcel G4 = ("B") H4 = ("(95%CI)") I4 = ("Uncorr. p-value") J4 = ("Corr. p-value") K4 = ("Cohen's d")
+putexcel L4 = ("B") M4 = ("(95%CI)") N4 = ("Uncorr. p-value") O4 = ("Corr. p-value") P4 = ("Cohen's d")
+putexcel A3:P4, bold
 
 forvalues i = 1/`=_N' {
     local excel_row = `i' + 4
@@ -301,25 +341,29 @@ forvalues i = 1/`=_N' {
 
     local sgc = sig_climate[`i']
     if `sgc'==1 {
-        putexcel B`excel_row' C`excel_row' D`excel_row' E`excel_row', bold
+        putexcel B`excel_row' C`excel_row' D`excel_row' E`excel_row' F`excel_row', bold
     }
     local sgh = sig_health[`i']
     if `sgh'==1 {
-        putexcel F`excel_row' G`excel_row' H`excel_row' I`excel_row', bold
+        putexcel G`excel_row' H`excel_row' I`excel_row' J`excel_row' K`excel_row', bold
     }
     local sgb = sig_combined[`i']
     if `sgb'==1 {
-        putexcel J`excel_row' K`excel_row' L`excel_row' M`excel_row', bold
+        putexcel L`excel_row' M`excel_row' N`excel_row' O`excel_row' P`excel_row', bold
     }
 }
 
-putexcel A3:M3, border(bottom)
-putexcel A4:M4, border(bottom)
+putexcel A3:P3, border(bottom)
+putexcel A4:P4, border(bottom)
 putexcel A3:A27, border(right)
-putexcel E3:E27, border(right)
-putexcel I3:I27, border(right)
-putexcel M3:M27, border(right)
-putexcel A3:M27, txtwrap
+putexcel F3:F27, border(right)
+putexcel K3:K27, border(right)
+putexcel P3:P27, border(right)
+putexcel A3:P27, txtwrap
+
+local noterow = _N + 6
+putexcel A`noterow' = ("Abbreviations. CI, confidence interval; CO2-eq, carbon dioxide equivalents; corr. p-value, corrected p-value; uncorr. p-value, uncorrected p-value.")
+putexcel A`=`noterow'+1' = ("Note. Table shows the impact of each swaps intervention compared to control (no intervention), given as the difference-in-differences from baseline to follow-up between the swaps arm and the control arm (B). Table shows effects pooled across the first and second exposure to the swaps. Corrected p-values use the Bonferroni-Holm method, considering the 6 co-primary tests together for healthfulness and carbon footprint and considering 3 tests per outcome for secondary outcomes. Bolded effects are statistically significant, uncorrected p<0.05.")
 
 * Figure 3 source.
 use "$CTData/dataset A_nutri and carbon.dta", clear

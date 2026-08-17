@@ -79,6 +79,10 @@ swaps/
   - `08_s5_bonferroni_holm_supplement.do` (legacy table of Bonferroni-Holm corrected p-values, now incorporated into table 2)
 - `07_ctgov_reporting_replication.do`: standalone; rebuilds the CT.gov reporting package under `output/tables/ctgov/` and runs the uploaded-baseline validator from `../ClinicalTrials_data/`. CT.gov outputs are not tracked on GitHub by default (see `.gitignore`).
 
+## Legacy Scripts
+08_s5_bonferroni_holm_supplement.do: produces a standalone Bonferroni-Holm corrected p-values table (s5_table_bh_corrected_pvalues.xlsx). This table is not called by 06_output_exports.do and is not part of the published Supporting Information — it is retained for reference only. 
+
+
 ## Notes
 
 - Prepared analysis datasets are read from `data/share/Output/`.

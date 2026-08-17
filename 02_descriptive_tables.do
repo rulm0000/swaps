@@ -28,7 +28,6 @@ input str40 key str220 value
 "psych_visit_variable" "visit"
 "acceptability_visit" "visit 3 only"
 "cohen_d_denominator" "Manually entered from Campbell Collaboration mixed-effects calculator; see 03_main_analysis.do comment"
-"consort_combined_dropout_rule" "Report CONSORT value=14; keep count_visit diagnostic=34"
 "note_not_sure_recode" "notice_* ==2 treated as 0 in rnotice_*"
 end
 
@@ -86,7 +85,7 @@ post `ppf' ("Randomized")                                (1201) (.)   (.)   (.) 
 post `ppf' ("Allocated to intervention (visit 1)")       (1201) (`alloc_control') (`alloc_climate') (`alloc_health') (`alloc_combined') ("computed")
 post `ppf' ("Received allocated intervention (visit 2)") (.)    (`recv2_control') (`recv2_climate') (`recv2_health') (`recv2_combined') ("computed")
 post `ppf' ("Received allocated intervention (visit 3)") (.)    (`recv3_control') (`recv3_climate') (`recv3_health') (`recv3_combined') ("computed")
-post `ppf' ("Dropped before receiving intervention")     (.)    (21) (17) (21) (14) ("consort_reported")
+post `ppf' ("Dropped before receiving intervention")     (.)    (21) (17) (21) (34) ("consort_reported")
 post `ppf' ("Dropped before intervention (count_visit diagnostic)") (.) (`noint_control') (`noint_climate') (`noint_health') (`noint_combined') ("computed_diagnostic")
 post `ppf' ("Analyzed")                                  (1201) (`alloc_control') (`alloc_climate') (`alloc_health') (`alloc_combined') ("computed")
 postclose `ppf'

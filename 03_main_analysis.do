@@ -363,7 +363,7 @@ putexcel A3:P27, txtwrap
 
 local noterow = _N + 6
 putexcel A`noterow' = ("Abbreviations. CI, confidence interval; CO2-eq, carbon dioxide equivalents; corr. p-value, corrected p-value; uncorr. p-value, uncorrected p-value.")
-putexcel A`=`noterow'+1' = ("Note. Table shows the impact of each swaps intervention compared to control (no intervention), given as the difference-in-differences from baseline to follow-up between the swaps arm and the control arm (B). Table shows effects pooled across the first and second exposure to the swaps. Corrected p-values use the Bonferroni-Holm method, considering the 6 co-primary tests together for healthfulness and carbon footprint and considering 3 tests per outcome for secondary outcomes. Bolded effects are statistically significant, uncorrected p<0.05.")
+putexcel A`=`noterow'+1' = ("Note. Table shows the impact of each swaps intervention compared to control (no intervention), given as the difference-in-differences from baseline to follow-up between the swaps arm and the control arm (B). Table shows effects pooled across the first and second exposure to the swaps. Corrected p-values use the Bonferroni-Holm method, considering the 6 co-primary tests together for healthfulness and carbon footprint and considering 3 tests per outcome for secondary outcomes. Bolded effects are statistically significant, corrected p<0.05.")
 
 * Figure 3 source.
 use "$CTData/dataset A_nutri and carbon.dta", clear

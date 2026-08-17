@@ -4,7 +4,7 @@ if "$project_root" == "" {
     do "00_global_paths.do"
 }
 
-* S5 supplement: Bonferroni-Holm corrected p-values for the Table 2 outcomes.
+*Bonferroni-Holm corrected p-values for the Table 2 outcomes.
 global CTData "$Data_share/Output"
 
 global ManuscriptTables "$OutTables/manuscript"
@@ -187,15 +187,15 @@ label variable b_combined_txt ""
 label variable ci_combined_txt ""
 label variable p_combined_txt ""
 
-putexcel set "$ManuscriptTables/s5_table_bh_corrected_pvalues.xlsx", replace
+putexcel set "$ManuscriptTables/s5_table_bh_corrected_pvalues.xlsx", replace //these pvalues are now in main text, not table S5 (tables we re-numbered during revisions)
 export excel row_label_display b_climate_txt ci_climate_txt p_climate_txt ///
     b_health_txt ci_health_txt p_health_txt ///
     b_combined_txt ci_combined_txt p_combined_txt ///
     using "$ManuscriptTables/s5_table_bh_corrected_pvalues.xlsx", ///
     sheet("Table2") sheetreplace cell(A5)
 
-putexcel set "$ManuscriptTables/s5_table_bh_corrected_pvalues.xlsx", sheet("Table2") modify
-putexcel A1 = ("S5 Table. Effects of the climate, health, and climate + health swaps on food and beverage purchases and psychological outcomes considering Bonferroni-Holm corrected p-values, n=1,201 US adults")
+putexcel set "$ManuscriptTables/s5_table_bh_corrected_pvalues.xlsx", sheet("Table2") modify //these pvalues are now in main text, not table S5 (tables we re-numbered during revisions)
+putexcel A1 = ("S5 Table. Effects of the climate, health, and climate + health swaps on food and beverage purchases and psychological outcomes considering Bonferroni-Holm corrected p-values, n=1,201 US adults") //these pvalues are now in main text, not table S5 (tables we re-numbered during revisions)
 putexcel A3 = ("Outcomes") B3 = ("Climate swaps") E3 = ("Health swaps") H3 = ("Climate + health swaps")
 putexcel B3:D3, merge hcenter
 putexcel E3:G3, merge hcenter

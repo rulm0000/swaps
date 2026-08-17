@@ -23,10 +23,10 @@ The full Green Choice product catalog is not included. Raw survey exports, raw s
 - `output/tables/manuscript/primary_moderation_effects_long.csv`
 - `output/tables/manuscript/primary_moderation_table_formatted.csv`
 - `output/tables/manuscript/primary_moderation_table_formatted.xlsx`
-- `output/tables/manuscript/s5_table_bh_corrected_pvalues.xlsx`
-- `output/tables/manuscript/s6_table_effects_by_food_group.xlsx`
+- `output/tables/manuscript/s5_table_effects_by_food_group.xlsx`
 - `output/figures/manuscript/figure3_source_primary_means_se_by_visit.csv`
 - `output/figures/manuscript/s1_figure_acceptability_of_online_store.csv`
+
 
 ## Submission Crosswalk
 
@@ -60,8 +60,7 @@ swaps/
 |   |      |-- primary_moderation_effects_long.csv
 |   |      |-- primary_moderation_table_formatted.csv
 |   |      |-- primary_moderation_table_formatted.xlsx
-|   |      |-- s5_table_bh_corrected_pvalues.xlsx
-|   |      `-- s6_table_effects_by_food_group.xlsx
+|   |      |-- s5_table_effects_by_food_group.xlsx
 |   `-- figures/
 |      `-- manuscript/
 |         |-- figure3_source_primary_means_se_by_visit.csv
@@ -77,7 +76,7 @@ swaps/
   - `03_main_analysis.do` (Table 2 and Figure 3 source)
   - `04_moderation_analysis.do` (primary-outcome moderation tables and CSV/XLSX exports)
   - `05_sensitivity_exposure.do` (S6 table)
-  - `08_s5_bonferroni_holm_supplement.do` (S5 Bonferroni-Holm corrected p-values table)
+  - `08_s5_bonferroni_holm_supplement.do` (legacy table of Bonferroni-Holm corrected p-values, now incorporated into table 2)
 - `07_ctgov_reporting_replication.do`: standalone; rebuilds the CT.gov reporting package under `output/tables/ctgov/` and runs the uploaded-baseline validator from `../ClinicalTrials_data/`. CT.gov outputs are not tracked on GitHub by default (see `.gitignore`).
 
 ## Notes

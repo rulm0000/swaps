@@ -290,9 +290,9 @@ replace d_climate_txt = strtrim(string(rep_dclimate,"%9.2f")) if row_type=="outc
 replace d_health_txt = strtrim(string(rep_dhealth,"%9.2f")) if row_type=="outcome"
 replace d_combined_txt = strtrim(string(rep_dcombined,"%9.2f")) if row_type=="outcome"
 
-gen byte sig_climate = (llclimate>0 | ulclimate<0) if row_type=="outcome"
-gen byte sig_health = (llhealth>0 | ulhealth<0) if row_type=="outcome"
-gen byte sig_combined = (llcombined>0 | ulcombined<0) if row_type=="outcome"
+gen byte sig_climate = (p_holmclimate<0.05) if row_type=="outcome"
+gen byte sig_health = (p_holmhealth<0.05) if row_type=="outcome"
+gen byte sig_combined = (p_holmcombined<0.05) if row_type=="outcome"
 gen byte is_section = (row_type=="section")
 gen byte is_subgroup = (row_type=="subgroup")
 

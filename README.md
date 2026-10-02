@@ -19,22 +19,29 @@ The full Green Choice product catalog is not included. Raw survey exports, raw s
 
 - `output/tables/manuscript/table1_participant_characteristics.xlsx`
 - `output/tables/manuscript/table2_effects_of_swaps.xlsx`
+- `output/tables/manuscript/swaps_offered_accepted_by_arm.csv`
 - `output/tables/manuscript/primary_moderation_joint_tests.csv`
 - `output/tables/manuscript/primary_moderation_effects_long.csv`
 - `output/tables/manuscript/primary_moderation_table_formatted.csv`
 - `output/tables/manuscript/primary_moderation_table_formatted.xlsx`
-- `output/tables/manuscript/s5_table_effects_by_food_group.xlsx`
+- `output/tables/manuscript/s6_table_effects_by_food_group.xlsx`
 - `output/figures/manuscript/figure3_source_primary_means_se_by_visit.csv`
+- `output/figures/manuscript/figure4_source_acceptability_of_swaps_and_labels.csv`
 - `output/figures/manuscript/s1_figure_acceptability_of_online_store.csv`
 
 
-## Submission Crosswalk
+## Published Article Crosswalk
 
-- `s5_table_bh_corrected_pvalues.xlsx` aligns to `K01Swaps_R1_S5 Table_BH corrected pvalues.docx`.
-- `s6_table_effects_by_food_group.xlsx` aligns to `K01Swaps_R1_S6 Table_Effects by Food Group.docx`.
-- `s1_figure_acceptability_of_online_store.csv` is the source export for `K01Swaps_R1_S1 Figure.docx`.
-- `figure3_source_primary_means_se_by_visit.csv` is the source export for `Figure3.tif`.
-- `table1_participant_characteristics.xlsx` and `table2_effects_of_swaps.xlsx` feed the main manuscript tables.
+Grummon et al. 2026, PLOS Medicine, doi:10.1371/journal.pmed.1004847. Supplement numbers changed during the R&R, so some file names keep their submission numbering.
+
+- `table1_participant_characteristics.xlsx` and `table2_effects_of_swaps.xlsx` feed Table 1 and Table 2.
+- `swaps_offered_accepted_by_arm.csv` is the source for the "Swaps offered and accepted" Results paragraph (intervention visits 2-3 only).
+- `figure3_source_primary_means_se_by_visit.csv` is the source export for Fig 3.
+- `figure4_source_acceptability_of_swaps_and_labels.csv` is the source export for Fig 4 (acceptability of the swaps and labels, visit 3).
+- `s1_figure_acceptability_of_online_store.csv` is the source export for S1 Fig (acceptability of the online store, visit 1) and the 94% (1,133/1,201) in the Results.
+- `s6_table_effects_by_food_group.xlsx` is published S5 Table (S6 in the R1 submission).
+- `primary_moderation_*` files give the moderation p-values reported in the Results.
+- `s5_table_bh_corrected_pvalues.xlsx` was S5 Table in the R1 submission; these corrected p-values are now in Table 2 (see Legacy Scripts).
 
 ## Repo Directory
 
@@ -42,7 +49,14 @@ The full Green Choice product catalog is not included. Raw survey exports, raw s
 swaps/
 |-- 00_global_paths.do
 |-- 01_dataprep_master.do
+|-- 02_descriptive_tables.do
+|-- 03_main_analysis.do
+|-- 04_moderation_analysis.do
+|-- 05_sensitivity_exposure.do
 |-- 06_output_exports.do
+|-- 07_ctgov_reporting_replication.do
+|-- 08_s5_bonferroni_holm_supplement.do
+|-- setup.do
 |-- data/
 |   `-- share/
 |      `-- Output/
@@ -56,14 +70,17 @@ swaps/
 |   |   `-- manuscript/
 |   |      |-- table1_participant_characteristics.xlsx
 |   |      |-- table2_effects_of_swaps.xlsx
+|   |      |-- swaps_offered_accepted_by_arm.csv
 |   |      |-- primary_moderation_joint_tests.csv
 |   |      |-- primary_moderation_effects_long.csv
 |   |      |-- primary_moderation_table_formatted.csv
 |   |      |-- primary_moderation_table_formatted.xlsx
-|   |      |-- s5_table_effects_by_food_group.xlsx
+|   |      |-- s5_table_bh_corrected_pvalues.xlsx
+|   |      `-- s6_table_effects_by_food_group.xlsx
 |   `-- figures/
 |      `-- manuscript/
 |         |-- figure3_source_primary_means_se_by_visit.csv
+|         |-- figure4_source_acceptability_of_swaps_and_labels.csv
 |         `-- s1_figure_acceptability_of_online_store.csv
 ```
 
@@ -72,11 +89,10 @@ swaps/
 - `00_global_paths.do`: public entrypoint, sets paths, skips the private raw-data rebuild, and runs `06_output_exports.do` from `data/share/Output/`.
 - `01_dataprep_master.do`: private provenance/raw-data rebuild retained for project maintainers; it depends on restricted raw survey, store, and Green Choice product inputs that are not included on GitHub.
 - `06_output_exports.do`: orchestrates manuscript exports:
-  - `02_descriptive_tables.do` (Table 1 and S1 figure source)
+  - `02_descriptive_tables.do` (Table 1, swaps offered/accepted, Fig 4 source, and S1 Fig source)
   - `03_main_analysis.do` (Table 2 and Figure 3 source)
   - `04_moderation_analysis.do` (primary-outcome moderation tables and CSV/XLSX exports)
-  - `05_sensitivity_exposure.do` (S6 table)
-  - `08_s5_bonferroni_holm_supplement.do` (legacy table of Bonferroni-Holm corrected p-values, now incorporated into table 2)
+  - `05_sensitivity_exposure.do` (published S5 Table; file keeps its R1 name `s6_table_effects_by_food_group.xlsx`)
 - `07_ctgov_reporting_replication.do`: standalone; rebuilds the CT.gov reporting package under `output/tables/ctgov/` and runs the uploaded-baseline validator from `../ClinicalTrials_data/`. CT.gov outputs are not tracked on GitHub by default (see `.gitignore`).
 
 ## Legacy Scripts

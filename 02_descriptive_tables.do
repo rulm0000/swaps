@@ -276,13 +276,19 @@ local note_row = _N + 6
 putexcel A`note_row'=("Note. Missing data ranged from 0.0% to 0.2%."), italic
 
 * 4) Descriptive swaps offered/accepted.
+* Intervention visits 2-3 only: no swaps are offered at the baseline visit, so
+* keeping visit 1 would understate the mean number of swaps offered.
 use "$CTData/dataset A_nutri and carbon.dta", clear
 keep if inlist(visit_store,2,3) & inlist(treatment_svy,2,3,4)
-collapse (mean) ttl_swapoffer prop_swapaccept (sd) sd_swapoffer=ttl_swapoffer sd_prop_swapaccept=prop_swapaccept, by(treatment_svy)
+collapse (count) n_trips=ttl_swapoffer (sum) total_swapoffer=ttl_swapoffer ///
+    (mean) ttl_swapoffer prop_swapaccept ///
+    (sd) sd_swapoffer=ttl_swapoffer sd_prop_swapaccept=prop_swapaccept, by(treatment_svy)
 gen arm = cond(treatment_svy==3,"climate swaps",cond(treatment_svy==2,"health swaps","climate + health swaps"))
-order arm ttl_swapoffer sd_swapoffer prop_swapaccept sd_prop_swapaccept treatment_svy
+order arm n_trips total_swapoffer ttl_swapoffer sd_swapoffer prop_swapaccept sd_prop_swapaccept treatment_svy
+list arm n_trips total_swapoffer ttl_swapoffer sd_swapoffer prop_swapaccept, noobs abbreviate(20)
+export delimited using "$ManuscriptTables/swaps_offered_accepted_by_arm.csv", replace
 
-* 5) Figure 4 source (acceptability proportions).
+* 5) Figure 4 source (acceptability of the swaps and labels, visit 3).
 use "$CTData/dataset C_Visit3 other outcomes.dta", clear
 foreach v in healthlabel_help healthlabel_like healthlabel_approve ///
              climatelabel_help climatelabel_like climatelabel_approve ///
@@ -308,4 +314,35 @@ foreach v in healthlabel_help healthlabel_like healthlabel_approve ///
 }
 postclose `p4'
 use `fig4', clear
+export delimited using "$ManuscriptFigures/figure4_source_acceptability_of_swaps_and_labels.csv", replace
+
+* 6) S1 Fig source (acceptability of the online store, rated at visit 1).
+* Share answering 4 or 5 on each 5-point item; e.g. wouldsimilar gives the
+* 94% (1,133/1,201) reported in the Results.
+use "$CTData/dataset D_Visit1 demog polsup.dta", clear
+local storevars store_ease likelyshopagain wouldsimilar similarusual realstore
+foreach v of local storevars {
+    gen d_`v' = (`v'>=4) if `v'<.
+}
+
+tempfile s1fig
+tempname ps1
+postfile `ps1' str40 variable str20 group long n_agree long n_total double prop using `s1fig', replace
+foreach v of local storevars {
+    quietly count if d_`v'==1
+    local n_agree = r(N)
+    quietly count if d_`v'<.
+    local n_total = r(N)
+    post `ps1' ("`v'") ("overall") (`n_agree') (`n_total') (`n_agree'/`n_total')
+    foreach a in 1 3 2 4 {
+        quietly count if d_`v'==1 & treatment_svy==`a'
+        local n_agree = r(N)
+        quietly count if d_`v'<. & treatment_svy==`a'
+        local n_total = r(N)
+        local g = cond(`a'==1,"control",cond(`a'==3,"climate",cond(`a'==2,"health","combined")))
+        post `ps1' ("`v'") ("`g'") (`n_agree') (`n_total') (`n_agree'/`n_total')
+    }
+}
+postclose `ps1'
+use `s1fig', clear
 export delimited using "$ManuscriptFigures/s1_figure_acceptability_of_online_store.csv", replace

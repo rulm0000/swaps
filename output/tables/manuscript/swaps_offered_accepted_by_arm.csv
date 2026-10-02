@@ -1,0 +1,4 @@
+arm,n_trips,total_swapoffer,ttl_swapoffer,sd_swapoffer,prop_swapaccept,sd_prop_swapaccept,treatment_svy
+health swaps,535,1907,3.564486,2.6363652,.27020726,.36682996,health
+climate swaps,541,2041,3.7726433,2.700835,.25483361,.36949447,environment
+climate + health swaps,509,2879,5.6561885,3.2930472,.26918349,.35078624,combined
